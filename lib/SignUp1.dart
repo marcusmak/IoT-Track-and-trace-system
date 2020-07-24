@@ -24,10 +24,30 @@ class SignUp1 extends StatelessWidget {
             ),
           ),
           // Adobe XD layer: 'Account Setting' (group)
-          Align(
-             alignment: Alignment(0.0,-0.25), 
-             child: 
-                Account_setting()
+          Stack(
+            //  crossAxisAlignment: CrossAxisAlignment.center,
+            //  mainAxisSize: MainAxisSize.max,
+             
+             children:
+                <Widget>[ 
+                  Align(
+                      alignment: Alignment(0.0,0), 
+                      child:Account_setting()
+                    ) ,
+                  Align(
+                      alignment: Alignment(0.0,1), 
+                      child:Text("By login the account you agree to\n our "+ 
+                                  "Terms of Service and Privacy Policy"
+                                  ,style:
+                                      TextStyle(
+                                          color:const Color.fromARGB(255, 225, 222, 210),//Color(0xE1DED2ff)
+                                      )
+                                  ,textAlign: TextAlign.center
+                                  ,
+
+                        ),
+                    )
+                ]
           )
         ]
       )
@@ -50,7 +70,7 @@ class Account_setting extends StatelessWidget{
             padding: EdgeInsets.symmetric(vertical:10.0),
             child:Container(
               child: FlatButton(
-                color: const Color.fromARGB(255, 59, 38, 21), //(0x59382100)
+                color: const Color.fromARGB(200, 59, 38, 21), //(0x59382100)
                 textColor: Colors.white,
                 disabledColor: Colors.grey,
                 disabledTextColor: Colors.black,
@@ -84,10 +104,17 @@ class Account_setting extends StatelessWidget{
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text("Not a member? "),
-                        Text("Sign Up Now",style:TextStyle(
-                          color:const Color.fromARGB(255, 225, 222, 210),//Color(0xE1DED2ff)
-                        )),
-
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.pushNamed(context, "myRoute");
+                            print("Hello World!");
+                          },
+                          child: 
+                              Text("Sign Up Now",
+                                style:TextStyle(
+                                  color:const Color.fromARGB(255, 225, 222, 210),//Color(0xE1DED2ff)
+                                  )),
+                          )
                         ],
                       ),
               alignment:AlignmentDirectional.topEnd,
