@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'SignUpPage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class SignUp1 extends StatelessWidget {
-  SignUp1({
+class LoginPage extends StatelessWidget {
+  LoginPage({
     Key key,
   }) : super(key: key);
   @override
@@ -106,7 +107,7 @@ class Account_setting extends StatelessWidget{
                         Text("Not a member? "),
                         GestureDetector(
                           onTap: () {
-                            // Navigator.pushNamed(context, "myRoute");
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage()));
                             print("Hello World!");
                           },
                           child: 
