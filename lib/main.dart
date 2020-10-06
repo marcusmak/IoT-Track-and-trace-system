@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+// import 'package:vb_v0/dashboard_screen.dart';
 import 'dashboard_screen.dart';
 import 'login_screen.dart';
 import 'transition_route_observer.dart';
@@ -18,19 +19,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login Demo',
+      title: 'VB1.0',
       theme: ThemeData(
         // brightness: Brightness.dark,
-        primarySwatch: Colors.deepPurple,
-        accentColor: Colors.orange,
-        cursorColor: Colors.orange,
+        primarySwatch: Colors.brown,
+        accentColor: Colors.white38,
+        cursorColor: Colors.white38,
         // fontFamily: 'SourceSansPro',
         textTheme: TextTheme(
           display2: TextStyle(
             fontFamily: 'OpenSans',
             fontSize: 45.0,
             // fontWeight: FontWeight.w400,
-            color: Colors.orange,
+            color: Colors.white,
           ),
           button: TextStyle(
             // OpenSans is similar to NotoSans but the uppercases look a bit better IMO
