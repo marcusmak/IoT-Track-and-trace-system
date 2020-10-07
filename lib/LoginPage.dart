@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vb_v0/UserProfile.dart';
 
 class LoginPage extends StatefulWidget{
   @override 
@@ -8,7 +9,15 @@ class LoginPage extends StatefulWidget{
   }
 }
 
+enum LoginPageState {LOGIN,SIGNUP,FORGOT}
+
 class _LoginPageState extends State<LoginPage>{
+  
+  LoginPageState _currentState = LoginPageState.LOGIN;
+  UserProfile _currentUser;
+  String _leftAddText = "Forget Password";
+  String _rightAddText = "Sign up";
+  
   @override
   Widget build(BuildContext context){
     return Scaffold(body: 
@@ -21,7 +30,7 @@ class _LoginPageState extends State<LoginPage>{
                     image: const AssetImage('assets/images/test.jpg'),
                     fit: BoxFit.cover,
                     colorFilter: new ColorFilter.mode(
-                        Colors.black.withOpacity(0.9), BlendMode.dst),
+                        Colors.green.withOpacity(0.5), BlendMode.dstIn),
                   ),
                   border: Border.all(width: 1.0, color: const Color(0x00000000)),
                 ),
@@ -51,7 +60,8 @@ class _LoginPageState extends State<LoginPage>{
                               mainAxisSize: MainAxisSize.max,
                               children: <Widget>[
                                 usernameInputWidget(),
-                                passwordInputWidget(),
+                                passwordInputWidget(_currentState != LoginPageState.FORGOT, "Password"),
+                                passwordInputWidget(_currentState == LoginPageState.SIGNUP, "Confirm Password"),
                                 loginButton(context),
                                 additionHyperlinks(),
                                 // forgetPassword(),
@@ -111,6 +121,7 @@ class _LoginPageState extends State<LoginPage>{
   }
 
   Widget userImage(BuildContext _context){
+    // return Container();
     return Container(
       height: MediaQuery.of(_context).size.height*0.20,
       width: MediaQuery.of(_context).size.height*0.20,
@@ -130,45 +141,62 @@ class _LoginPageState extends State<LoginPage>{
 
 
   Widget usernameInputWidget(){
-    return TextFormField(
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          fontSize:20,
-          fontWeight: FontWeight.w500,
-          // color:Color.fromRGBO(225, 222, 210, 1)
-        ),
-        labelText:  "Username",
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color:Color.fromRGBO(225, 222, 210, 1)),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-          borderSide: BorderSide(width: 1,)
-        ),
+    String labelText = "Username / Email";
+    if(_currentState == LoginPageState.FORGOT)
+      labelText = "Recovery username/email";
+    return Visibility(
+        child: TextFormField(
+        decoration: InputDecoration(
+          labelStyle: TextStyle(
+            fontSize:20,
+            fontWeight: FontWeight.w500,
+            // color:Color.fromRGBO(225, 222, 210, 1)
+          ),
+          labelText:  labelText,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(width:1, color:Color.fromRGBO(125, 122, 110, 1)),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(25)),
+            borderSide: BorderSide(width: 1,)
+          ),
 
+        ),
       ),
+      visible: true,
     );
   }
-  Widget passwordInputWidget(){
-    return TextFormField(
-      decoration: InputDecoration(
-        labelStyle: TextStyle(fontSize:20,fontWeight: FontWeight.w500),
-        labelText:  "Password",
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(width: 1,)
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: BorderSide(color:Color.fromRGBO(225, 222, 210, 1)),
-        ),
+  Widget passwordInputWidget(bool isVisible, String labelText){
+    return Visibility(
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelStyle: TextStyle(fontSize:20,fontWeight: FontWeight.w500),
+          labelText:  labelText,
+          //focused border
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(width: 1,)
+          ),
+          //Normal border
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(width:1, color:Color.fromRGBO(125, 122, 110, 1)),
+          ),
 
+        ),
       ),
+      visible: isVisible,
     );
   }
 
   Widget loginButton(BuildContext _context){
+    String labelText = "LOGIN";
+    if(_currentState == LoginPageState.FORGOT){
+      labelText = "RECOVER";
+    }else if (_currentState == LoginPageState.SIGNUP){
+      labelText = "SIGN UP";
+    }
     return Container(
       height: MediaQuery.of(_context).size.height * 0.07,
       child: MaterialButton(
@@ -176,19 +204,21 @@ class _LoginPageState extends State<LoginPage>{
         child: Center(
           child: 
           Text(
-            "LOGIN",
+            labelText,
             style:TextStyle(fontSize:25, color:Color.fromRGBO(225, 222, 210, 1), fontWeight: FontWeight.w600)
           ) 
         ),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
-        gradient: LinearGradient(
-          colors: [
-            Color.fromRGBO(89,56,33,1),
-            Color.fromRGBO(89,56,33,1),
-          ],
-        )
+        border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
+        color: Color.fromRGBO(89,56,33,1),
+        // gradient: LinearGradient(
+        //   colors: [
+        //     Color.fromRGBO(89,56,33,1),
+        //     Color.fromRGBO(89,56,33,1),
+        //   ],
+        // )
       )
     );
   }
@@ -204,22 +234,80 @@ class _LoginPageState extends State<LoginPage>{
           GestureDetector(
             onTap: () {
               // Navigator.pushNamed(context, "myRoute");
-              print("forget password!");
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    appBar: AppBar(title: Text('My Page')),
+                    body: Center(
+                      child: FlatButton(
+                        child: Text('POP'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ));
+              if(_currentState == LoginPageState.LOGIN){
+                setState(() {
+                      _currentState = LoginPageState.FORGOT;
+                      _leftAddText = "Login";
+                });
+                print("forget password!");
+              }else if (_currentState == LoginPageState.FORGOT){
+                setState(() {
+                      _currentState = LoginPageState.LOGIN;
+                      _leftAddText = "Forget password";
+                });
+                print("forget password!");
+              }else if(_currentState == LoginPageState.SIGNUP){
+                setState(() {
+                      _currentState = LoginPageState.FORGOT;
+                      _leftAddText = "Login";
+                      _rightAddText = "Sign up";
+                });
+              }
             },
             child: 
             Text(
-              "Forget password",
-              // style:TextStyle(
-              //   color:const Color.fromARGB(255, 225, 222, 210),//Color(0xE1DED2ff)
-              // )
+              _leftAddText,
+              style:TextStyle(
+                color:const Color.fromRGBO(89,56,33,1),
+                fontWeight: FontWeight.w600,
+                fontSize: 15
+              )
             ),
           ),
           GestureDetector(
             onTap: () {
-              print("sign up");
+              if(_currentState == LoginPageState.LOGIN){
+                setState(() {
+                      _currentState = LoginPageState.SIGNUP;
+                      _rightAddText = "Login";
+                });
+                
+              }else if(_currentState == LoginPageState.SIGNUP){
+                setState(() {
+                      _currentState = LoginPageState.LOGIN;
+                      _rightAddText = "Sign up";
+                });
+                
+              }else if(_currentState == LoginPageState.FORGOT){
+                setState(() {
+                      _currentState = LoginPageState.SIGNUP;
+                      _rightAddText = "Login";
+                      _leftAddText  = "Forget password";
+                });
+              }
             },
             child: Text(
-              "Sign up"
+              _rightAddText,
+              style:TextStyle(
+                color:const Color.fromRGBO(89,56,33,1),
+                fontWeight: FontWeight.w600,
+                fontSize: 15
+              )
             ),
 
           ),

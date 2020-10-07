@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginPage(),
+      routes: <String, WidgetBuilder>{},
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
