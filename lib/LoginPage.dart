@@ -24,16 +24,17 @@ class _LoginPageState extends State<LoginPage>{
         Stack(
           children: <Widget>[
               Container(
-                constraints: BoxConstraints.expand(),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: const AssetImage('assets/images/test.jpg'),
-                    fit: BoxFit.cover,
-                    colorFilter: new ColorFilter.mode(
-                        Colors.green.withOpacity(0.5), BlendMode.dstIn),
+                  constraints: BoxConstraints.expand(),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: const AssetImage('assets/images/login_background.jpg'),
+                      fit: BoxFit.fill,
+                      colorFilter: new ColorFilter.mode(
+                          Colors.black.withOpacity(0.2), BlendMode.multiply),
+                    ),
+                    border: Border.all(width: 1.0, color: const Color(0x00000000)),
                   ),
-                  border: Border.all(width: 1.0, color: const Color(0x00000000)),
-                ),
+                
               )
               ,SingleChildScrollView(    
                 //physics: NeverScrollableScrollPhysics(),
@@ -95,10 +96,11 @@ class _LoginPageState extends State<LoginPage>{
   Widget infoDisplayColumn(BuildContext _context){
     return Container(
       padding: EdgeInsets.fromLTRB(
-        MediaQuery.of(_context).size.width  * 0.25,
+        0,
         MediaQuery.of(_context).size.height * 0.1,
         0,0
       ),
+      alignment: Alignment.center,
       child:Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -150,12 +152,12 @@ class _LoginPageState extends State<LoginPage>{
           labelStyle: TextStyle(
             fontSize:20,
             fontWeight: FontWeight.w500,
-            // color:Color.fromRGBO(225, 222, 210, 1)
+            color:Color.fromRGBO(225, 222, 210, 1)
           ),
           labelText:  labelText,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: BorderSide(width:1, color:Color.fromRGBO(125, 122, 110, 1)),
+            borderSide: BorderSide(width:1, color:Color.fromRGBO(225, 222, 210, 1)),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -171,7 +173,7 @@ class _LoginPageState extends State<LoginPage>{
     return Visibility(
       child: TextFormField(
         decoration: InputDecoration(
-          labelStyle: TextStyle(fontSize:20,fontWeight: FontWeight.w500),
+          labelStyle: TextStyle(fontSize:20,fontWeight: FontWeight.w500,color:Color.fromRGBO(225, 222, 210, 1)),
           labelText:  labelText,
           //focused border
           border: OutlineInputBorder(
@@ -181,7 +183,7 @@ class _LoginPageState extends State<LoginPage>{
           //Normal border
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: BorderSide(width:1, color:Color.fromRGBO(125, 122, 110, 1)),
+            borderSide: BorderSide(width:1, color:Color.fromRGBO(225, 222, 210, 1)),
           ),
 
         ),
@@ -196,11 +198,16 @@ class _LoginPageState extends State<LoginPage>{
       labelText = "RECOVER";
     }else if (_currentState == LoginPageState.SIGNUP){
       labelText = "SIGN UP";
-    }
+    };
+
     return Container(
       height: MediaQuery.of(_context).size.height * 0.07,
-      child: MaterialButton(
-        onPressed: (){},
+      child: FlatButton(
+        onPressed: (){
+          
+          // Navigator.pushReplacementNamed(context, '/register');
+
+        },
         child: Center(
           child: 
           Text(
@@ -234,21 +241,7 @@ class _LoginPageState extends State<LoginPage>{
           GestureDetector(
             onTap: () {
               // Navigator.pushNamed(context, "myRoute");
-              Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return Scaffold(
-                    appBar: AppBar(title: Text('My Page')),
-                    body: Center(
-                      child: FlatButton(
-                        child: Text('POP'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ));
+              
               if(_currentState == LoginPageState.LOGIN){
                 setState(() {
                       _currentState = LoginPageState.FORGOT;
@@ -273,7 +266,7 @@ class _LoginPageState extends State<LoginPage>{
             Text(
               _leftAddText,
               style:TextStyle(
-                color:const Color.fromRGBO(89,56,33,1),
+                color:Color.fromRGBO(200, 197, 185, 1),
                 fontWeight: FontWeight.w600,
                 fontSize: 15
               )
@@ -281,30 +274,31 @@ class _LoginPageState extends State<LoginPage>{
           ),
           GestureDetector(
             onTap: () {
-              if(_currentState == LoginPageState.LOGIN){
-                setState(() {
-                      _currentState = LoginPageState.SIGNUP;
-                      _rightAddText = "Login";
-                });
+              Navigator.pushNamed(context, '/register');
+              // if(_currentState == LoginPageState.LOGIN){
+              //   setState(() {
+              //         _currentState = LoginPageState.SIGNUP;
+              //         _rightAddText = "Login";
+              //   });
                 
-              }else if(_currentState == LoginPageState.SIGNUP){
-                setState(() {
-                      _currentState = LoginPageState.LOGIN;
-                      _rightAddText = "Sign up";
-                });
+              // }else if(_currentState == LoginPageState.SIGNUP){
+              //   setState(() {
+              //         _currentState = LoginPageState.LOGIN;
+              //         _rightAddText = "Sign up";
+              //   });
                 
-              }else if(_currentState == LoginPageState.FORGOT){
-                setState(() {
-                      _currentState = LoginPageState.SIGNUP;
-                      _rightAddText = "Login";
-                      _leftAddText  = "Forget password";
-                });
-              }
+              // }else if(_currentState == LoginPageState.FORGOT){
+              //   setState(() {
+              //         _currentState = LoginPageState.SIGNUP;
+              //         _rightAddText = "Login";
+              //         _leftAddText  = "Forget password";
+              //   });
+              // }
             },
             child: Text(
               _rightAddText,
               style:TextStyle(
-                color:const Color.fromRGBO(89,56,33,1),
+                color:Color.fromRGBO(200, 197, 185, 1),
                 fontWeight: FontWeight.w600,
                 fontSize: 15
               )
