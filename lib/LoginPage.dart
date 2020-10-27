@@ -202,9 +202,9 @@ class _LoginPageState extends State<LoginPage>{
 
     return Container(
       height: MediaQuery.of(_context).size.height * 0.07,
-      child: FlatButton(
+      child: MaterialButton(
         onPressed: (){
-          
+          print(labelText);
           // Navigator.pushReplacementNamed(context, '/register');
 
         },
