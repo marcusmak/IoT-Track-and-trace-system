@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:vb_v0/Register_components/AccountRegComponent.dart';
 import 'package:vb_v0/Register_components/AgeComponent.dart';
+import 'package:vb_v0/Register_components/JobComponent.dart';
+import 'package:vb_v0/Register_components/MapComponent.dart';
+import 'package:vb_v0/Register_components/GenderComponent.dart';
 // import 'LoginPage.dart';
 
 class RegisterPage extends StatelessWidget{
@@ -23,6 +26,7 @@ class RegisterPage extends StatelessWidget{
               ),
           ),
           SingleChildScrollView(
+            physics: NeverScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.10,
@@ -96,8 +100,10 @@ class QuestionaireState extends State<Questionaire>{
             scrollDirection: Axis.horizontal,
             children: <Widget>[
               AccountRegComponent(),
+              GenderComponent(),
               AgeComponent(),
-              
+              // JobComponent(),
+              MapComponent(),
             ]
     );
   }
