@@ -98,7 +98,6 @@ class _GenderComponentState extends State{
   }
 } 
 
-// class GenderSeclection extends Stateful
 
 // class CustomElevation extends StatelessWidget {
 //   final Widget child;

@@ -1,7 +1,7 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_map/simple_map.dart';
-import 'package:vb_v0/HelperComponent/InputWidget.dart';
+import 'package:vb_v0/HelperComponents/InputWidget.dart';
 
 
 class MapComponent extends StatefulWidget{
@@ -38,8 +38,6 @@ class _MapComponentState extends State {
                         Text("Where do you live?", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
                       ],
                     )
-                      
-                    
                   )
         ), 
         Expanded(flex:5, 

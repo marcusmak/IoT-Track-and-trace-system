@@ -1,6 +1,6 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'; 
-import 'package:vb_v0/HelperComponent/InputWidget.dart';
+import 'package:vb_v0/HelperComponents/InputWidget.dart';
 
 class AccountRegComponent extends StatelessWidget{
   @override

@@ -20,7 +20,8 @@ class _LoginPageState extends State<LoginPage>{
   
   @override
   Widget build(BuildContext context){
-    return Scaffold(body: 
+    return Scaffold(
+      body: 
         Stack(
           children: <Widget>[
               Container(
@@ -205,7 +206,10 @@ class _LoginPageState extends State<LoginPage>{
       child: MaterialButton(
         onPressed: (){
           print(labelText);
-          // Navigator.pushReplacementNamed(context, '/register');
+          if(labelText == "LOGIN"){
+            Navigator.pushReplacementNamed(context, '/home');
+          }
+          // 
 
         },
         child: Center(
