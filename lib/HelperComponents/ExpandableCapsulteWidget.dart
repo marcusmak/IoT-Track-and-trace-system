@@ -1,10 +1,10 @@
-import 'dart:ui';
-
+// import 'dart:ui';
 import 'package:flutter/material.dart';
+
 class ExpandableCapsulteWidget extends StatelessWidget {
   final Widget child;
   final Widget title;
-  static const Color barBgColor = Color.fromARGB(255, 79, 79, 79);
+  static const Color barBgColor = Color.fromARGB(200, 79, 79, 79);
   const ExpandableCapsulteWidget({Key key,this.title,@required this.child}) : super(key: key);
 
   @override
@@ -13,14 +13,29 @@ class ExpandableCapsulteWidget extends StatelessWidget {
       child: 
         Padding(
           padding: EdgeInsets.symmetric(
-                                          vertical:   MediaQuery.of(context).size.height * 0.025,
-                                          horizontal: MediaQuery.of(context).size.width * 0.01
-                                        ),
-          child: Container(
+            vertical:   MediaQuery.of(context).size.height * 0.025,
+            horizontal: MediaQuery.of(context).size.width * 0.01
+          ),
+          child: Material(
+            color: Colors.transparent,
+            shadowColor: Colors.white24,
+            elevation: 20,
+            child:Container(
             
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Colors.white,
+              //     blurRadius: 25.0, // soften the shadow
+              //     spreadRadius: 0.1, //extend the shadow
+              //     offset: Offset(
+              //       5.0, // Move to right 10  horizontally
+              //       5.0, // Move to bottom 10 Vertically
+              //     ),
+              //   )
+              // ],
+              // border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
               color: barBgColor,
               // gradient: LinearGradient(
               //   colors: [
@@ -42,6 +57,7 @@ class ExpandableCapsulteWidget extends StatelessWidget {
                 // backgroundColor: Colors.black,
                 
                 title: this.title,
+                initiallyExpanded: true,
                 onExpansionChanged: (bool _isExpanded){
                   print(_isExpanded);
                 },
@@ -51,6 +67,7 @@ class ExpandableCapsulteWidget extends StatelessWidget {
               ),
             ),
           )
+         )
         )
         
       

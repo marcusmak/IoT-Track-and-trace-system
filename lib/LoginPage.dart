@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vb_v0/UserProfile.dart';
+import 'package:vb_v0/ModelClass/UserProfile.dart';
 
 class LoginPage extends StatefulWidget{
   @override 

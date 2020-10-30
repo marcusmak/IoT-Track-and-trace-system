@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
             title: Text('Packing'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
+            icon: Icon(Icons.pie_chart),
             title: Text('School'),
           ),
         ],
