@@ -3,16 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:vb_v0/HelperComponents/InputWidget.dart';
 
 class AccountRegComponent extends StatelessWidget{
+  // final PageController controller;
+  // const AccountRegComponent({ Key key, this.controller }) : super(key: key);
+  // AccountRegComponent();
+
   @override
   Widget build(BuildContext context){
         return Container(
           // constraints: BoxConstraints.expand(),
-          height:MediaQuery.of(context).size.height * 0.75,
-          child:Form(
-              child:Column(
+          height: MediaQuery.of(context).size.height * 0.75,
+          child: Form(
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children:[
                   QuestionWidget(),
+                  // GestureDetector(
+                  //   onTap: (){
+                  //     print("submit");
+                  //     controller.nextPage(
+                  //       duration:  new Duration(seconds: 1), 
+                  //       curve:     Curves.easeIn,
+                  //     );
+                  //   },
+                  //   child: Text("submit"),
+                  // )
               ]
             )
           )

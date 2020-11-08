@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:vb_v0/Register_components/AccountRegComponent.dart';
 import 'package:vb_v0/Register_components/AgeComponent.dart';
@@ -91,12 +93,12 @@ class QuestionaireState extends State<Questionaire>{
     initialPage: 0,
   );
 
-  @override
-  Widget build(BuildContext context) {
+  Widget mainContent(){
     return PageView(
             controller: controller,
             onPageChanged: (page)=>{ print(page.toString()) },
             pageSnapping: true,
+            // physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
             children: <Widget>[
               AccountRegComponent(),
@@ -105,6 +107,44 @@ class QuestionaireState extends State<Questionaire>{
               // JobComponent(),
               MapComponent(),
             ]
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: mainContent(),),
+        Container(child: 
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+              padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.05),
+              child: GestureDetector(
+                  onTap: () {
+                    print("hi");
+                    controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                  },                
+                  child: Text("Prev",style: TextStyle(color: Colors.white),),
+                )
+                  
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.05),
+                child: GestureDetector(
+                  onTap: () {
+                    print("hi");
+                    controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                  },                
+                  child: Text("Next",style: TextStyle(color: Colors.white),),
+                )
+                  
+              ),
+            ],
+          )
+        ,)
+      ],
     );
   }
 }

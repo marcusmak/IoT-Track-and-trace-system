@@ -1,11 +1,11 @@
 // import 'dart:ui';
 import 'package:flutter/material.dart';
 
-class ExpandableCapsulteWidget extends StatelessWidget {
+class ExpandableCapsuleWidget extends StatelessWidget {
   final Widget child;
   final Widget title;
-  static const Color barBgColor = Color.fromARGB(200, 79, 79, 79);
-  const ExpandableCapsulteWidget({Key key,this.title,@required this.child}) : super(key: key);
+  static const Color barBgColor = Color.fromARGB(200, 60  , 60  , 60);
+  const ExpandableCapsuleWidget({Key key,this.title,@required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ExpandableCapsulteWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(
             vertical:   MediaQuery.of(context).size.height * 0.025,
-            horizontal: MediaQuery.of(context).size.width * 0.01
+            horizontal: MediaQuery.of(context).size.width * 0.05
           ),
           child: Material(
             color: Colors.transparent,

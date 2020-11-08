@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vb_v0/HomeComponents/ListTab.dart';
-
+import 'package:vb_v0/HomeComponents/Tabs.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class HomePage extends StatefulWidget {
@@ -23,14 +22,16 @@ class _HomePageState extends State<HomePage> {
     //   style: optionStyle,
     // ),
     ListTab(),
+    // MapTab(),
     Text(
       'Index 1: Map',
       style: optionStyle,
     ),
-    Text(
-      'Index 2: Packing',
-      style: optionStyle,
-    ),
+    PackingTab(),
+    // Text(
+    //   'Index 2: Packing',
+    //   style: optionStyle,
+    // ),
     Text(
       'Index 3: Chart',
       style: optionStyle,
@@ -100,6 +101,7 @@ class _HomePageState extends State<HomePage> {
                   GestureDetector(
                     onTap: (){
                       print("go to setting");
+                      Navigator.pushNamed(context, "/setting");
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),
@@ -140,10 +142,10 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Color.fromRGBO(207, 190, 190, 1),
         unselectedItemColor: inactiveBtnColor,
-        showSelectedLabels: false,
+        showSelectedLabels: true,
         iconSize: 30.0,
         type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: false,
+        showUnselectedLabels: true,
         onTap: _onItemTapped,
         backgroundColor: barBgColor,
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
 import 'LoginPage.dart';
+import 'SettingPage.dart';
 // import 'main_template.dart';
 // import 'SignUp1.dart';
 
@@ -35,8 +36,10 @@ class MyApp extends StatelessWidget {
       ),
       home: LoginPage(),
       routes: <String, WidgetBuilder>{
+        '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),
         '/home': (BuildContext context) => HomePage(),
+        '/setting': (BuildContext context) => SettingPage(),
       },
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );

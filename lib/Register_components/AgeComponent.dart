@@ -66,7 +66,15 @@ class AgeScrollable extends StatefulWidget{
 } 
 
 class _AgeScrollableState extends State<AgeScrollable>{
-  int _index = 30;
+  int _index = 0;
+  PageController _controller = PageController(initialPage: 0,viewportFraction: 0.4);
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("initialize age scollable state");
+    WidgetsBinding.instance.addPostFrameCallback((_)=>_controller.animateToPage(30, duration: Duration(seconds: 1), curve: Curves.bounceOut));
+  }
 
   @override
   Widget build(BuildContext context){
@@ -81,7 +89,8 @@ class _AgeScrollableState extends State<AgeScrollable>{
                           child:PageView.builder(
                             pageSnapping: false,
                             itemCount: 80,
-                            controller: PageController(initialPage: 30,viewportFraction: 0.4),
+                            controller:_controller,
+                            
                             onPageChanged: (int index) => setState(() => _index = index),
                             itemBuilder: (_, i) {
                               if(i == _index)

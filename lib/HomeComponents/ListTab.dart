@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
-import 'package:vb_v0/HelperComponents/ExpandableCapsulteWidget.dart';
+import 'package:vb_v0/HelperComponents/ExpandableCapsuleWidget.dart';
 
 
 class ListTab extends StatelessWidget{
@@ -25,19 +25,19 @@ class ListTab extends StatelessWidget{
         child:
           Column(
             children: <Widget>[
-              ExpandableCapsulteWidget(
+              ExpandableCapsuleWidget(
                 title: Text("Digital",style: titleStyle,),
                 child: ItemListContainer(),
               ),
-              ExpandableCapsulteWidget(
+              ExpandableCapsuleWidget(
                 title: Text("Sport",style: titleStyle,),
                 child: ItemListContainer(),
               ),
-              ExpandableCapsulteWidget(
+              ExpandableCapsuleWidget(
                 title: Text("Work",style: titleStyle,),
                 child: ItemListContainer(),
               ),
-              ExpandableCapsulteWidget(
+              ExpandableCapsuleWidget(
                 title: Text("Clothes",style: titleStyle,),
                 child: ItemListContainer(),
               ),
@@ -66,7 +66,7 @@ class _ItemListContainerState extends State<ItemListContainer>{
     int i = 0;
     this.itemFetcher.items.forEach((element) {
       if(i%2 == 0){
-        print(i);
+        // print(i);
         rows.add(
           TableRow(
             children:[
@@ -75,7 +75,7 @@ class _ItemListContainerState extends State<ItemListContainer>{
           )
         );
       }else{
-        print(i);
+        // print(i);
         rows.last.children.add(ItemContainer(item: element),);
       }
       ++i;
@@ -119,7 +119,7 @@ class ItemContainer extends StatelessWidget {
 
                         SizedBox(
                           height:MediaQuery.of(context).size.height * 0.15 ,
-                          width:MediaQuery.of(context).size.width * 0.35,
+                          width:MediaQuery.of(context).size.width * 0.5,
                           
                           child: Image.asset(item.image, fit: BoxFit.fill),
                         ),
