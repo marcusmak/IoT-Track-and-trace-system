@@ -12,12 +12,14 @@ class AgeComponent extends StatelessWidget{
                 
                 child:
                   Container(
+                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*0.025),
                     child:Column(
+                      
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text("What's your age?", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
+                        Text("Age", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
                       ],
                     )
                       
@@ -65,7 +67,10 @@ class AgeScrollable extends StatefulWidget{
   _AgeScrollableState createState() => _AgeScrollableState();
 } 
 
-class _AgeScrollableState extends State<AgeScrollable>{
+class _AgeScrollableState extends State<AgeScrollable> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
+  
   int _index = 0;
   PageController _controller = PageController(initialPage: 0,viewportFraction: 0.4);
   @override

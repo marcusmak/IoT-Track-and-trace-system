@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
+import 'ControllerClass/ItemFetcher.dart';
 import 'LoginPage.dart';
 import 'SettingPage.dart';
+import 'ScanPage.dart';
 // import 'main_template.dart';
 // import 'SignUp1.dart';
 
@@ -12,6 +14,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  // static ItemFetcher itemFetcher = ItemFetcher();
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +30,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.brown,
+        primarySwatch: Colors.grey,
         // accentColor:Colors.orange,
         
         // This makes the visual density adapt to the platform that you run
@@ -34,12 +38,13 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(),
+      home: ScanPage(),
       routes: <String, WidgetBuilder>{
         '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),
         '/home': (BuildContext context) => HomePage(),
         '/setting': (BuildContext context) => SettingPage(),
+        '/scan_setup':(BuildContext context) => ScanPage(),
       },
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );

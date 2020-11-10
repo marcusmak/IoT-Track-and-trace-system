@@ -57,6 +57,12 @@ class ItemListContainer extends StatefulWidget{
 class _ItemListContainerState extends State<ItemListContainer>{
   ItemFetcher itemFetcher = ItemFetcher();
   @override
+  void initState() { 
+    super.initState();
+    itemFetcher.initItems();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return tableBuilder();
   }

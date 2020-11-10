@@ -43,7 +43,10 @@ class QuestionWidget extends StatefulWidget{
   }
 }
 
-class _QuestionWidgetState extends State<QuestionWidget>{
+class _QuestionWidgetState extends State<QuestionWidget> with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context){
     return Column(

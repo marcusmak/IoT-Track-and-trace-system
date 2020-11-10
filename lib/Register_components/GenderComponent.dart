@@ -6,7 +6,11 @@ class GenderComponent extends StatefulWidget{
   _GenderComponentState createState() => _GenderComponentState();
 }
 
-class _GenderComponentState extends State{
+class _GenderComponentState extends State with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
+
+
    int selectedRadio;
    final BoxDecoration floatingEffect =
        BoxDecoration(
@@ -26,7 +30,7 @@ class _GenderComponentState extends State{
       );
   
    Widget build(BuildContext context){
-    
+    print("Selected Radio: " + selectedRadio.toString());
     return Container(
       child:Column(
         children: <Widget>[
@@ -35,12 +39,14 @@ class _GenderComponentState extends State{
                 
                 child:
                   Container(
+                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*0.025),
                     child:Column(
+                      
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text("What's your \n bio-gender?", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
+                        Text("Biological Sex", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
                       ],
                     )
                       

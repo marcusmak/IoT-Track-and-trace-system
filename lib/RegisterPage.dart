@@ -32,7 +32,7 @@ class RegisterPage extends StatelessWidget{
             child: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.10,
-                horizontal: MediaQuery.of(context).size.width * 0.05
+                // horizontal: MediaQuery.of(context).size.width * 0.05
               ),
               child:Column(
                 children: <Widget>[
@@ -40,7 +40,9 @@ class RegisterPage extends StatelessWidget{
                     onTap: (){
                       Navigator.pop(context);
                     },
-                    child:Row(
+                    child:Padding(
+                      padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+                      child:Row(
                       children : <Widget> [
                         Icon(
                           Icons.arrow_back_ios,
@@ -49,7 +51,9 @@ class RegisterPage extends StatelessWidget{
                         ),
                         Text("Back", style: TextStyle(color: Color.fromRGBO(217,215,157,1), fontWeight: FontWeight.w700, fontSize: 25),)
                       ]
+                      )
                     )
+
                   ),
                   Container(
                     // constraints: BoxConstraints.expand(),
@@ -89,6 +93,15 @@ class Questionaire extends StatefulWidget{
 }
 
 class QuestionaireState extends State<Questionaire>{
+  int pageNum = 0;
+  final List<Widget> questions = <Widget>[
+              AccountRegComponent(),
+              GenderComponent(),
+              AgeComponent(),
+              // JobComponent(),
+              MapComponent(),
+  ];
+
   final controller = PageController(
     initialPage: 0,
   );
@@ -96,17 +109,11 @@ class QuestionaireState extends State<Questionaire>{
   Widget mainContent(){
     return PageView(
             controller: controller,
-            onPageChanged: (page)=>{ print(page.toString()) },
+            onPageChanged: (page){ setState((){pageNum = page;}); print(page.toString()); },
             pageSnapping: true,
-            // physics: NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              AccountRegComponent(),
-              GenderComponent(),
-              AgeComponent(),
-              // JobComponent(),
-              MapComponent(),
-            ]
+            children: questions
     );
   }
 
@@ -120,24 +127,25 @@ class QuestionaireState extends State<Questionaire>{
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-              padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.05),
-              child: GestureDetector(
+              padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+              child: (pageNum!=0)?GestureDetector(
                   onTap: () {
-                    print("hi");
                     controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
                   },                
                   child: Text("Prev",style: TextStyle(color: Colors.white),),
-                )
+                ):Container()
                   
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.05),
+                padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
                 child: GestureDetector(
                   onTap: () {
-                    print("hi");
-                    controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                    if(pageNum!=questions.length-1)
+                      controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                    else
+                      Navigator.pushReplacementNamed(context, '/scan_setup');
                   },                
-                  child: Text("Next",style: TextStyle(color: Colors.white),),
+                  child: Text(pageNum==questions.length-1?"Submit":"Next",style: TextStyle(color: Colors.white),),
                 )
                   
               ),

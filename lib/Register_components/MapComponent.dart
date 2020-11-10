@@ -9,12 +9,15 @@ class MapComponent extends StatefulWidget{
   _MapComponentState createState() => _MapComponentState(); 
 }
 
-class _MapComponentState extends State {
+class _MapComponentState extends State with AutomaticKeepAliveClientMixin{
+  @override
+  bool get wantKeepAlive => true;
+  
   final mapOptions = SimpleMapOptions(
     // You can use your own map image
     // mapAsset: 'assets/map.png',
-    mapColor: Colors.blueGrey,
-    bgColor: Color.fromARGB(255, 255, 255, 255),
+    mapColor: Color.fromARGB(255, 225, 225, 225),
+    bgColor: Colors.transparent,//Color.fromARGB(255, 255, 255, 255),
   );
 
   final SimpleMapController mapController = SimpleMapController();
@@ -30,12 +33,14 @@ class _MapComponentState extends State {
                 flex:1, 
                 child:
                   Container(
+                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*0.025),
                     child:Column(
+                      
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text("Where do you live?", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
+                        Text("Place of residence", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
                       ],
                     )
                   )
