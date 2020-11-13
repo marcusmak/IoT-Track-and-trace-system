@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vb_v0/ModelClass/UserProfile.dart';
+import 'package:http/http.dart' as http;
+import 'Global_var.dart';
 
 class LoginPage extends StatefulWidget{
+
   @override 
   _LoginPageState createState(){
     return _LoginPageState();
@@ -17,7 +20,7 @@ class _LoginPageState extends State<LoginPage>{
   UserProfile _currentUser;
   String _leftAddText = "Forget Password";
   String _rightAddText = "Sign up";
-  
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -207,7 +210,13 @@ class _LoginPageState extends State<LoginPage>{
         onPressed: (){
           print(labelText);
           if(labelText == "LOGIN"){
-            Navigator.pushReplacementNamed(context, '/home');
+            // Navigator.pushReplacementNamed(context, '/home');
+            try {
+              http.get(SERVER_URL).then((value) => print(value.body));
+              // print(test);
+            }catch(e){
+              print(e);
+            }
           }
           // 
 
