@@ -1,37 +1,19 @@
 // import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'package:vb_v0/ModelClass/UserProfile.dart'; 
 
-class AgeComponent extends StatelessWidget{
+class AgeComponent extends StatefulWidget{
+  final UserProfile userProfile;
+  final PageController controller;
+  
+  AgeComponent({ Key key, this.userProfile, this.controller}) : super(key: key);
   @override
-  Widget build(BuildContext context){
-    return Container(
-      child:Column(
-        children: <Widget>[
-        Expanded(
-                flex:1, 
-                
-                child:
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*0.025),
-                    child:Column(
-                      
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text("Age", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
-                      ],
-                    )
-                      
-                    
-                  )
-                    
-                ), 
-        Expanded(flex:3, child: AgeScrollable(),)
-      ],)
-    );
-  }
-}
+  _AgeComponentState createState() => _AgeComponentState(userProfile: this.userProfile, controller: this.controller);
+} 
+
+// class  extends StatelessWidget{
+  
+// }
 
 
 class CustomElevation extends StatelessWidget {
@@ -62,17 +44,17 @@ class CustomElevation extends StatelessWidget {
   }
 }
 
-class AgeScrollable extends StatefulWidget{
-  @override
-  _AgeScrollableState createState() => _AgeScrollableState();
-} 
-
-class _AgeScrollableState extends State<AgeScrollable> with AutomaticKeepAliveClientMixin{
+class _AgeComponentState extends State<AgeComponent> with AutomaticKeepAliveClientMixin{
   @override
   bool get wantKeepAlive => true;
   
   int _index = 0;
   PageController _controller = PageController(initialPage: 0,viewportFraction: 0.4);
+  final UserProfile userProfile;
+  final PageController controller;
+  
+  _AgeComponentState({this.userProfile, this.controller});
+
   @override
   void initState() {
     // TODO: implement initState
@@ -83,6 +65,72 @@ class _AgeScrollableState extends State<AgeScrollable> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context){
+    return Container(
+      child:Column(
+        children: <Widget>[
+          Expanded(child: 
+            Column(
+              children:[
+                Expanded(
+                  flex:1, 
+                  
+                  child:
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*0.025),
+                      child:Column(
+                        
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text("Age", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 35),)
+                        ],
+                      )
+                        
+                      
+                    )
+                      
+                  ), 
+                Expanded(flex:3, child: AgeScrollable(context),),
+              ]
+            )
+          ),
+          Container(child: 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+                child: GestureDetector(
+                    onTap: () {
+                      controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                    },                
+                    child: Text("Prev",style: TextStyle(color: Colors.white),),
+                  )
+                    
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+                  child: GestureDetector(
+                    onTap: () {
+                      if(_index != 0){
+                        // print("Age: " + _index.toString());
+                        userProfile.age = _index;
+                        controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                      }
+                    },                
+                    child: Text("Next",style: TextStyle(color: Colors.white),),
+                  )
+                    
+                ),
+              ],
+            )
+          ,)
+      ],)
+    );
+  }
+
+  Widget AgeScrollable(BuildContext context){
         return Container(
                     // constraints: BoxConstraints.expand(),
                     height:MediaQuery.of(context).size.height * 0.6,

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:vb_v0/ModelClass/UserProfile.dart';
 import 'package:vb_v0/Register_components/AccountRegComponent.dart';
 import 'package:vb_v0/Register_components/AgeComponent.dart';
 import 'package:vb_v0/Register_components/JobComponent.dart';
@@ -28,7 +29,7 @@ class RegisterPage extends StatelessWidget{
               ),
           ),
           SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
+            // physics: NeverScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.10,
@@ -94,13 +95,32 @@ class Questionaire extends StatefulWidget{
 
 class QuestionaireState extends State<Questionaire>{
   int pageNum = 0;
-  final List<Widget> questions = <Widget>[
-              AccountRegComponent(),
-              GenderComponent(),
-              AgeComponent(),
-              // JobComponent(),
-              MapComponent(),
-  ];
+  List<Widget> questions;
+  UserProfile userProfile = new UserProfile();
+  void Function() onNextCallback;
+  
+  // void onNext(void Function() onNextCallback){
+  //   setState(
+  //     ()=> this.onNextCallback = onNextCallback
+  //   );
+  // }
+  
+  @override
+  void initState() { 
+    super.initState();
+    questions = <Widget>[
+      AccountRegComponent(userProfile: userProfile, controller: controller),
+      GenderComponent(userProfile: userProfile, controller: controller),
+      AgeComponent(userProfile: userProfile, controller: controller),
+      // JobComponent(),
+      MapComponent(userProfile: userProfile, controller: controller),
+      // ConfirmationComponent(userProfile: userProfile, controller: controller),
+    ];
+    // WidgetsBinding.instance
+    //     .addPostFrameCallback((_) => print("Username:" + userProfile.userName.toString()));
+    
+  }
+
 
   final controller = PageController(
     initialPage: 0,
@@ -116,43 +136,64 @@ class QuestionaireState extends State<Questionaire>{
             children: questions
     );
   }
+  
+  
 
   @override
   Widget build(BuildContext context) {
+    
     return Column(
       children: [
         Expanded(child: mainContent(),),
-        Container(child: 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-              padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
-              child: (pageNum!=0)?GestureDetector(
-                  onTap: () {
-                    controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-                  },                
-                  child: Text("Prev",style: TextStyle(color: Colors.white),),
-                ):Container()
+        // Container(child: 
+        //   Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       Padding(
+        //       padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+        //       child: (pageNum!=0)?GestureDetector(
+        //           onTap: () {
+        //             controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        //           },                
+        //           child: Text("Prev",style: TextStyle(color: Colors.white),),
+        //         ):Container()
                   
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
-                child: GestureDetector(
-                  onTap: () {
-                    if(pageNum!=questions.length-1)
-                      controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-                    else
-                      Navigator.pushReplacementNamed(context, '/scan_setup');
-                  },                
-                  child: Text(pageNum==questions.length-1?"Submit":"Next",style: TextStyle(color: Colors.white),),
-                )
+        //       ),
+        //       Padding(
+        //         padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+        //         child: GestureDetector(
+        //           onTap: () {
+        //             if(pageNum!=questions.length-1){
+        //               // if(onNextCallback != null ){
+        //               //   onNextCallback();
+        //               // }
+        //               controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        //             }
+        //             else
+        //               Navigator.pushReplacementNamed(context, '/scan_setup');
+        //           },                
+        //           child: Text(pageNum==questions.length-1?"Submit":"Next",style: TextStyle(color: Colors.white),),
+        //         )
                   
-              ),
-            ],
-          )
-        ,)
+        //       ),
+        //     ],
+        //   )
+        // ,)
       ],
+    );
+  }
+}
+
+
+class ConfirmationComponent extends StatelessWidget {
+  final PageController controller;
+  final UserProfile userProfile;
+  const ConfirmationComponent({Key key, this.controller, this.userProfile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
     );
   }
 }

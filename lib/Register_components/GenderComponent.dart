@@ -1,18 +1,26 @@
 // import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'package:vb_v0/ModelClass/UserProfile.dart'; 
 
 class GenderComponent extends StatefulWidget{
+  final UserProfile userProfile;
+  final PageController controller;
+
+  GenderComponent({ Key key, this.userProfile, this.controller}) : super(key: key);
   @override
-  _GenderComponentState createState() => _GenderComponentState();
+  _GenderComponentState createState() => _GenderComponentState(userProfile: this.userProfile, controller: this.controller);
 }
 
 class _GenderComponentState extends State with AutomaticKeepAliveClientMixin{
   @override
   bool get wantKeepAlive => true;
+  final UserProfile userProfile;
+  final PageController controller;
+  _GenderComponentState({this.userProfile, this.controller});
 
+  int selectedRadio = -1;
 
-   int selectedRadio;
-   final BoxDecoration floatingEffect =
+  final BoxDecoration floatingEffect =
        BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: <BoxShadow>[
@@ -30,7 +38,7 @@ class _GenderComponentState extends State with AutomaticKeepAliveClientMixin{
       );
   
    Widget build(BuildContext context){
-    print("Selected Radio: " + selectedRadio.toString());
+    
     return Container(
       child:Column(
         children: <Widget>[
@@ -98,7 +106,40 @@ class _GenderComponentState extends State with AutomaticKeepAliveClientMixin{
 
           
       
-        )
+        ),
+
+        Container(child: 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+                child: GestureDetector(
+                    onTap: () {
+                      controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                    },                
+                    child: Text("Prev",style: TextStyle(color: Colors.white),),
+                  )
+                    
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width * 0.1),
+                  child: GestureDetector(
+                    onTap: () {
+                      print("Selected Radio: " + selectedRadio.toString());
+                      if(selectedRadio != -1){
+                        userProfile.sex = selectedRadio;
+                        controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+                      }
+                    },                
+                    child: Text("Next",style: TextStyle(color: Colors.white),),
+                  )
+                    
+                ),
+              ],
+            )
+          ,)
+
       ],)
     );
   }

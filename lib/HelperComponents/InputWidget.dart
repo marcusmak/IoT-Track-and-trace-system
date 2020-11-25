@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
-Widget inputWidget(BuildContext _context, String labelText){
+Widget inputWidget(BuildContext _context, String labelText, {TextEditingController controller, String Function(String) validator ,bool obscure = false}){
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: MediaQuery.of(_context).size.height * 0.05,
         vertical: MediaQuery.of(_context).size.height * 0.01,
       ),
       child:TextFormField(
-        
+        controller: controller,
+        obscureText: obscure,
+        validator: validator,
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           counterStyle: TextStyle(
             fontSize:20,

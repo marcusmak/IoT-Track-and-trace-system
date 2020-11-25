@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:vb_v0/ModelClass/UserProfile.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +22,18 @@ class _LoginPageState extends State<LoginPage>{
   UserProfile _currentUser;
   String _leftAddText = "Forget Password";
   String _rightAddText = "Sign up";
+  final _formKey = GlobalKey<FormState>();
+  final _unController = TextEditingController();
+  final _pwdController = TextEditingController();
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _unController.dispose();
+    _pwdController.dispose();
+    super.dispose();
+  }
+
+
 
   @override
   Widget build(BuildContext context){
@@ -56,6 +70,7 @@ class _LoginPageState extends State<LoginPage>{
                         // headerText(),
                         infoDisplayColumn(context),
                         Form(
+                          key: _formKey,
                           child: Container(
                             
                             height:MediaQuery.of(context).size.height * 0.4,
@@ -66,7 +81,7 @@ class _LoginPageState extends State<LoginPage>{
                               children: <Widget>[
                                 usernameInputWidget(),
                                 passwordInputWidget(_currentState != LoginPageState.FORGOT, "Password"),
-                                passwordInputWidget(_currentState == LoginPageState.SIGNUP, "Confirm Password"),
+                                // passwordInputWidget(_currentState == LoginPageState.SIGNUP, "Confirm Password"),
                                 loginButton(context),
                                 additionHyperlinks(),
                                 // forgetPassword(),
@@ -152,6 +167,13 @@ class _LoginPageState extends State<LoginPage>{
       labelText = "Recovery username/email";
     return Visibility(
         child: TextFormField(
+        controller: _unController,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Please enter your username/email';
+          }
+          return null;
+        },
         decoration: InputDecoration(
           labelStyle: TextStyle(
             fontSize:20,
@@ -176,6 +198,14 @@ class _LoginPageState extends State<LoginPage>{
   Widget passwordInputWidget(bool isVisible, String labelText){
     return Visibility(
       child: TextFormField(
+        controller: _pwdController,
+        obscureText: true,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Please enter your password';
+          }
+          return null;
+        },
         decoration: InputDecoration(
           labelStyle: TextStyle(fontSize:20,fontWeight: FontWeight.w500,color:Color.fromRGBO(225, 222, 210, 1)),
           labelText:  labelText,
@@ -212,7 +242,29 @@ class _LoginPageState extends State<LoginPage>{
           if(labelText == "LOGIN"){
             // Navigator.pushReplacementNamed(context, '/home');
             try {
-              http.get(SERVER_URL).then((value) => print(value.body));
+              if (_formKey.currentState.validate()) {
+                // If the form is valid, display a snackbar. In the real world,
+                // you'd often call a server or save the information in a database.
+
+                http.post(SERVER_URL+'/login',
+                  headers: <String, String>{
+                    'Content-Type': 'application/json; charset=UTF-8',
+                  },
+                  body: jsonEncode(<String, String>{
+                    'username': _unController.text,
+                    'password': _pwdController.text
+                  }),
+                ).then((value){
+                  if(value.statusCode == 200){
+                    //TODO
+                    //store username and password and userid //jwt? //session?
+                    Navigator.of(context).pushReplacementNamed("/home");
+
+
+                  }
+                });
+
+              }
               // print(test);
             }catch(e){
               print(e);
