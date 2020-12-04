@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'Context.dart';
 import 'package:flutter/widgets.dart';
 
 class Item {
@@ -14,9 +15,4 @@ class Item {
   String image;
 
   Item({@required this.iid, @required this.name, this.rItems, this.rContexts, this.image});
-}
-
-//temp class will be removed later
-class Context {
-
 }

@@ -5,6 +5,8 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 
+import 'ControllerClass/BLEConnector.dart';
+
 
 
 class ScanPage extends StatefulWidget {
@@ -66,8 +68,9 @@ class _ScanPageState extends State<ScanPage> {
                     textStyle: ts,
                     // displayFullTextOnTap: true,
                     // stopPauseOnTap: true
-                  )
-
+                  ),
+                  //TODO: test bluetooth function
+                  // BLEConnector() 
 
                 ],)
               );
@@ -109,14 +112,14 @@ class _ScanPageState extends State<ScanPage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 30, 30, 30),
       body: scanned?itemGridView():scanningTextWidget(),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: isTimeout?FloatingActionButton(
         onPressed: (){
           // print("transit to main page");
           Navigator.pushReplacementNamed(context, "/home");
         },
         child: Icon(Icons.navigate_next, color: Colors.white,size: 50,),
         
-      )
+      ):null
             
       
     );

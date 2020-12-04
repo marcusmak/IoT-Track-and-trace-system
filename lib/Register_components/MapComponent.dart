@@ -36,20 +36,21 @@ class _MapComponentState extends State with AutomaticKeepAliveClientMixin{
 
   void registerProfile(){
     print("object");
-    http.post(SERVER_URL+'/signup',
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: userProfile.toJSON(),
-    ).then((value){
-      if(value.statusCode == 201){
-        //TODO
-        //store username and password and userid //jwt? //session?
-        Navigator.of(context).pushReplacementNamed("/scan_setup");
+    // http.post(SERVER_URL+'/signup',
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    //   body: userProfile.toJSON(),
+    // ).then((value){
+    //   if(value.statusCode == 201){
+    //     //TODO
+    //     //store username and password and userid //jwt? //session?
+    //     Navigator.of(context).pushReplacementNamed("/scan_setup");
 
 
-      }
-    });
+    //   }
+    // });
+     Navigator.of(context).pushReplacementNamed("/scan_setup");
   }
 
   @override

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
@@ -7,9 +8,20 @@ import 'SettingPage.dart';
 import 'ScanPage.dart';
 // import 'main_template.dart';
 // import 'SignUp1.dart';
+import 'dart:isolate';
 
-void main() {
+import 'package:android_alarm_manager/android_alarm_manager.dart';
+
+void printHello() {
+  final DateTime now = DateTime.now();
+  final int isolateId = Isolate.current.hashCode;
+  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+}
+
+void main() async {
+  AndroidAlarmManager.initialize();
   runApp(MyApp());
+  // AndroidAlarmManager.periodic(const Duration(minutes: 1), helloAlarmID, printHello);
 }
 
 class MyApp extends StatelessWidget {
@@ -30,6 +42,12 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.grey,
+        primaryColor: Colors.grey,
+        accentColor: Colors.grey,
+        hintColor: Colors.grey,
+        cardColor: Colors.grey,
+        brightness: Brightness.dark,
+        // secondaryHeaderColor: Colors.amber,
         // accentColor:Colors.orange,
         
         // This makes the visual density adapt to the platform that you run
@@ -37,7 +55,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(),
+      home: HomePage(),
       routes: <String, WidgetBuilder>{
         '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),

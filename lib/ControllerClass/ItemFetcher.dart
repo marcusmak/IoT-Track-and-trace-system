@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 class ItemFetcher {
     List<Item> items;
+    static List<Item> currentHolding;
     static const FitMode = BoxFit.fill;
     // ItemFetcher(){
       
