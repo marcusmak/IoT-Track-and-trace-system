@@ -41,12 +41,13 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.grey,
-        primaryColor: Colors.grey,
-        accentColor: Colors.grey,
-        hintColor: Colors.grey,
-        cardColor: Colors.grey,
-        brightness: Brightness.dark,
+        // primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.dark(),
+        accentColor: const Color(0xffbb86fc),
+        backgroundColor: Colors.grey[800],
+        // hintColor: Colors.grey,
+        // cardColor: Colors.black,
+        // brightness: Brightness.dark,
         // secondaryHeaderColor: Colors.amber,
         // accentColor:Colors.orange,
         

@@ -34,7 +34,7 @@ dependencies:
   android_alarm_manager: ^0.4.5+17
   date_time_picker: "^1.1.0"
   flutter_material_pickers: 1.8.0
-  # flutter_picker: ^1.1.5
+  flutter_picker: ^1.1.5
   # flutter_reactive_ble: ^2.7.1
 
 
