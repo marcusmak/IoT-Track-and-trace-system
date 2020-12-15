@@ -7,13 +7,15 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 // import 'package:flutter_picker/flutter_picker.dart';
 
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManage.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 import 'package:vb_v0/HelperComponents/ExpandableCapsuleWidget.dart';
-import 'package:vb_v0/ModelClass/Context.dart';
+import 'package:vb_v0/ModelClass/ItemContext.dart';
 
 class ListTab extends StatelessWidget{
     void Function(Widget) setBPContent;
-    ListTab(this.setBPContent);
+    void Function(bool) setBottomPrompt;
+    ListTab(this.setBPContent, this.setBottomPrompt);
 
     static const TextStyle titleStyle = 
       TextStyle(
@@ -35,19 +37,19 @@ class ListTab extends StatelessWidget{
             children: <Widget>[
               ExpandableCapsuleWidget(
                 title: Text("Digital",style: titleStyle,),
-                child: ItemListContainer(setBPContent),
+                child: ItemListContainer(setBPContent,setBottomPrompt),
               ),
               ExpandableCapsuleWidget(
                 title: Text("Sport",style: titleStyle,),
-                child: ItemListContainer(setBPContent),
+                child: ItemListContainer(setBPContent,setBottomPrompt),
               ),
               ExpandableCapsuleWidget(
                 title: Text("Work",style: titleStyle,),
-                child: ItemListContainer(setBPContent),
+                child: ItemListContainer(setBPContent,setBottomPrompt),
               ),
               ExpandableCapsuleWidget(
                 title: Text("Clothes",style: titleStyle,),
-                child: ItemListContainer(setBPContent),
+                child: ItemListContainer(setBPContent,setBottomPrompt),
               ),
               
             ]
@@ -59,7 +61,8 @@ class ListTab extends StatelessWidget{
 
 class ItemListContainer extends StatefulWidget{
   void Function(Widget) setBPContent;
-  ItemListContainer(this.setBPContent,{Key key}):super(key:key);
+  void Function(bool) setBottomPrompt;
+  ItemListContainer(this.setBPContent,this.setBottomPrompt,{Key key}):super(key:key);
 
   @override
   State<StatefulWidget> createState() => _ItemListContainerState();
@@ -87,13 +90,13 @@ class _ItemListContainerState extends State<ItemListContainer>{
         rows.add(
           TableRow(
             children:[
-              ItemContainer(widget.setBPContent, item: element),
+              ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),
             ]
           )
         );
       }else{
         // print(i);
-        rows.last.children.add(ItemContainer(widget.setBPContent, item: element),);
+        rows.last.children.add(ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),);
       }
       ++i;
     });
@@ -107,8 +110,8 @@ class _ItemListContainerState extends State<ItemListContainer>{
 class ItemContainer extends StatelessWidget {
   final Item item;
   void Function(Widget) setBPContent;
-  
-  ItemContainer(this.setBPContent,{Key key, this.item}) : super(key: key);
+  void Function(bool) setBottomPrompt;
+  ItemContainer(this.setBPContent, this.setBottomPrompt,{Key key, this.item}) : super(key: key);
   
 
   @override
@@ -155,7 +158,7 @@ class ItemContainer extends StatelessWidget {
               // width:MediaQuery.of(context).size.width * 0.01
             ),
             onTap: (){
-              this.setBPContent(ReminderView(item));   
+              this.setBPContent(ReminderView(item,this.setBottomPrompt));   
               print(item.name);
             },
           )
@@ -166,7 +169,8 @@ class ItemContainer extends StatelessWidget {
 
 class ReminderView extends StatefulWidget {
   Item item;
-  ReminderView(this.item,{Key key}) : super(key: key);
+  void Function(bool) setBottomPrompt;
+  ReminderView(this.item,this.setBottomPrompt,{Key key}) : super(key: key);
 
   @override
   _ReminderViewState createState() => _ReminderViewState();
@@ -181,7 +185,7 @@ class _ReminderViewState extends State<ReminderView> {
   TextEditingController _dateController = TextEditingController(text: "None");
   TextEditingController _timeController = TextEditingController(text: "None");
   List<Location> leavingLocations = List();
-  List<Location> enteringLocations = List();
+  List<Location> headingLocations = List();
   final TextStyle whiteFont = TextStyle(color: Colors.white);
   Widget reminderView(BuildContext context){
       return Column(
@@ -364,8 +368,10 @@ class _ReminderViewState extends State<ReminderView> {
         );
     Widget repeatPicker = Row(
       children:[
-        IconButton(icon: Icon(Icons.repeat)
-        , onPressed: (){
+        IconButton(
+          icon: Icon(Icons.repeat),
+          color: repeat != "Never"?Theme.of(context).colorScheme.primary:null,
+          onPressed: (){
           showMaterialSelectionPicker(
                             // headerTextColor: Theme.of(context).colorScheme.primary,
                             buttonTextColor: Theme.of(context).colorScheme.primary,
@@ -389,7 +395,10 @@ class _ReminderViewState extends State<ReminderView> {
                               }
                               setState(()=>repeat = value);
                             },
-                            onConfirmed: ()=>print("confirm"),
+                            onConfirmed: (){
+
+                              print("confirm");
+                            },
                             selectedItem: repeat,
 
                           );                     
@@ -401,10 +410,10 @@ class _ReminderViewState extends State<ReminderView> {
     Widget Function(bool) locationSelector = (bool enter){ 
         String places = ""; 
         if(enter){
-          if(enteringLocations.length == 0)
+          if(headingLocations.length == 0)
             places = "None";
           else
-            enteringLocations.forEach((element) {places +=  element.toString() + ", ";});
+            headingLocations.forEach((element) {places +=  element.toString() + ", ";});
         }else{
           if(leavingLocations.length == 0)
             places = "None";
@@ -435,23 +444,19 @@ class _ReminderViewState extends State<ReminderView> {
                 context: context,
                 title: "Locations",
                 items: locations,
-                selectedItems: enter?enteringLocations.map((elem)=>elem.name).toList():leavingLocations.map((elem)=>elem.name).toList(),
+                selectedItems: enter?headingLocations.map((elem)=>elem.name).toList():leavingLocations.map((elem)=>elem.name).toList(),
                 onChanged: (value) {
                   if(enter)
-                    setState(() => enteringLocations = value.map((e) => new Location(name: e)).toList());
+                    setState(() => headingLocations = value.map((e) => new Location(name: e)).toList());
                   else
                     setState(() => leavingLocations =  value.map((e) => new Location(name: e)).toList());
                   // print(value.map((e) => new Location(name: e)).toList());
                 },
               );
             }),
-
-           
-           
-         
-                Expanded(
-                  child:Text(places,overflow: TextOverflow.ellipsis,style:TextStyle(color: Colors.grey[400]))
-                )
+            Expanded(
+              child:Text(places,overflow: TextOverflow.ellipsis,style:TextStyle(color: Colors.grey[400]))
+            )
           ]
         );
     };
@@ -476,7 +481,31 @@ class _ReminderViewState extends State<ReminderView> {
           ],
         ),
         MaterialButton(
-          onPressed: ()=>print("confirm"),
+          onPressed: (){
+            // DateTime targetDate;
+            // TimeOfDay selectedTime;
+            // String repeat = "Never";
+            // List<String> customRepeat = [];
+            // TextEditingController _dateController = TextEditingController(text: "None");
+            // TextEditingController _timeController = TextEditingController(text: "None");
+            // List<Location> leavingLocations = List();
+            // List<Location> headingLocations = List();
+            int start_time = targetDate!=null?targetDate.millisecondsSinceEpoch:null;
+            if(selectedTime != null){
+              start_time += selectedTime.hour * 3600 * 1000;
+              start_time += selectedTime.minute * 60 * 1000;
+            };
+            AddCustomRule(
+              ItemContext(
+                start_time: start_time,
+                frequency: repeat,
+                from_loc: leavingLocations.isNotEmpty?leavingLocations.toString():null,
+                to_loc: headingLocations.isNotEmpty?headingLocations.toString():null
+              ),widget.item
+            );
+            BrosweData("custom_rule");
+            print("confirm");
+          },
           child: Container(
             padding: EdgeInsets.symmetric(
               vertical: MediaQuery.of(context).size.height * 0.005,

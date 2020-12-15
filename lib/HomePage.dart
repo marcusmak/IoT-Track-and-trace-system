@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       //   'Index 0: List',
       //   style: optionStyle,
       // ),
-      ListTab(this.setBPContent),
+      ListTab(this.setBPContent,this.setBottomPrompt),
       // MapTab(),
       Text(
         'Index 1: Map',

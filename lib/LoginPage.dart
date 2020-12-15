@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:vb_v0/ModelClass/UserProfile.dart';
 import 'package:http/http.dart' as http;
 import 'Global_var.dart';
-import 'package:vb_v0/ControllerClass/BackgroundUpdate.dart';
+// import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
 
 class LoginPage extends StatefulWidget{
 
@@ -39,7 +39,6 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   Widget build(BuildContext context){
-    BackgroundUpdate.main();
     return Scaffold(
       body: 
         Stack(

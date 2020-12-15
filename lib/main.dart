@@ -1,7 +1,9 @@
-
 import 'package:flutter/material.dart';
+import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManage.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
+import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
 import 'ControllerClass/ItemFetcher.dart';
 import 'LoginPage.dart';
 import 'SettingPage.dart';
@@ -19,13 +21,19 @@ void printHello() {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   AndroidAlarmManager.initialize();
+  InitialiseDatabase();
+
   runApp(MyApp());
-  // AndroidAlarmManager.periodic(const Duration(minutes: 1), helloAlarmID, printHello);
+  // BackgroundUpdater backgroundUpdater = BackgroundUpdater();
+  // DeleteDatabase();
+  // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*helloAlarmID*/ 4, printHello, exact: true, rescheduleOnReboot: false);
+  // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*backgroundUpdaterID*/ 1 , backgroundUpdater.loop);
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  // This widget is the root of your a pplication.
   // static ItemFetcher itemFetcher = ItemFetcher();
   @override
   Widget build(BuildContext context) {

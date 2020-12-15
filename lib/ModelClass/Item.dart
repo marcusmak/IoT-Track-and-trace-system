@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'Context.dart';
+import 'package:vb_v0/ModelClass/ItemContext.dart';
 import 'package:flutter/widgets.dart';
 
 class Item {
@@ -10,7 +10,7 @@ class Item {
   //related items
   List<Item> rItems;
   //related context
-  List<Context> rContexts;
+  List<ItemContext> rContexts;
   
   String image;
 
