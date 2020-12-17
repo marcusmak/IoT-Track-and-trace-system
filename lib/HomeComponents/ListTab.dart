@@ -7,7 +7,7 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 // import 'package:flutter_picker/flutter_picker.dart';
 
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
-import 'package:vb_v0/ControllerClass/LocalDataManage.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 import 'package:vb_v0/HelperComponents/ExpandableCapsuleWidget.dart';
 import 'package:vb_v0/ModelClass/ItemContext.dart';
@@ -481,7 +481,7 @@ class _ReminderViewState extends State<ReminderView> {
           ],
         ),
         MaterialButton(
-          onPressed: (){
+          onPressed: () async{
             // DateTime targetDate;
             // TimeOfDay selectedTime;
             // String repeat = "Never";
@@ -495,7 +495,7 @@ class _ReminderViewState extends State<ReminderView> {
               start_time += selectedTime.hour * 3600 * 1000;
               start_time += selectedTime.minute * 60 * 1000;
             };
-            AddCustomRule(
+            await LocalDataManager.AddCustomRule(
               ItemContext(
                 start_time: start_time,
                 frequency: repeat,
@@ -503,8 +503,10 @@ class _ReminderViewState extends State<ReminderView> {
                 to_loc: headingLocations.isNotEmpty?headingLocations.toString():null
               ),widget.item
             );
-            BrosweData("custom_rule");
+            LocalDataManager.BrosweData("custom_rule");
+            widget.setBottomPrompt(false);
             print("confirm");
+            
           },
           child: Container(
             padding: EdgeInsets.symmetric(
