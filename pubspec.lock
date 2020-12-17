@@ -8,13 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.4"
-  android_alarm_manager:
-    dependency: "direct main"
-    description:
-      name: android_alarm_manager
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.5+17"
   animated_text_kit:
     dependency: "direct main"
     description:
@@ -106,32 +99,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  fixnum:
-    dependency: transitive
-    description:
-      name: fixnum
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.10.11"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_background_service:
-    dependency: "direct main"
-    description:
-      name: flutter_background_service
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.1+18"
-  flutter_blue:
-    dependency: "direct main"
-    description:
-      name: flutter_blue
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.3"
   flutter_colorpicker:
     dependency: transitive
     description:
@@ -280,20 +252,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
-  protobuf:
-    dependency: transitive
-    description:
-      name: protobuf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.24.1"
   simple_map:
     dependency: "direct main"
     description:
