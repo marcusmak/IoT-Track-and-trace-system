@@ -30,11 +30,14 @@ public class RunAfterBootService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         String message = "RunAfterBootService onStartCommand() method.";
-
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-
         Log.d(TAG_BOOT_EXECUTE_SERVICE, "RunAfterBootService onStartCommand() method.");
+//        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
+        //get current ble list
+        //get current context
+        //check system rule
+        //check custom rule
+        //check internet recommendations
         return super.onStartCommand(intent, flags, startId);
     }
 
