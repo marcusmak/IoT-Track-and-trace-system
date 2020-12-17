@@ -12,7 +12,7 @@ import 'ScanPage.dart';
 // import 'SignUp1.dart';
 import 'dart:isolate';
 
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:android_alarm_manager/android_alarm_manager.dart';
 
 // void printHello(){
