@@ -67,11 +67,11 @@ public class BootDeviceReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long startTime = System.currentTimeMillis();
-        long intervalTime = 1000;
+        long intervalTime = 60*1000;
 
         String message = "Start service use repeat alarm. ";
 
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+//      Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
         Log.d(TAG_BOOT_BROADCAST_RECEIVER, message);
 
