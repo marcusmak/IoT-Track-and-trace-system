@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
-import 'package:vb_v0/ControllerClass/LocalDataManage.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
 import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
@@ -12,31 +12,43 @@ import 'ScanPage.dart';
 // import 'SignUp1.dart';
 import 'dart:isolate';
 
-import 'package:android_alarm_manager/android_alarm_manager.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:android_alarm_manager/android_alarm_manager.dart';
 
-void printHello() {
-  final DateTime now = DateTime.now();
-  final int isolateId = Isolate.current.hashCode;
-  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
-}
+// void printHello(){
+//   final DateTime now = DateTime.now();
+//   final int isolateId = Isolate.current.hashCode;
+//   print("[$now] Hello, in loop! isolate=${isolateId} function='$printHello'");
+//   Fluttertoast.showToast(
+//       msg: "This is Center Short Toast",
+//       toastLength: Toast.LENGTH_SHORT,
+//       gravity: ToastGravity.CENTER,
+//       timeInSecForIosWeb: 1,
+//       backgroundColor: Colors.red,
+//       textColor: Colors.white,
+//       fontSize: 16.0
+//   );
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AndroidAlarmManager.initialize();
-  InitialiseDatabase();
-
+  // AndroidAlarmManager.initialize();
+  // LocalDataManager.DeleteDatabase();
+  LocalDataManager.InitialiseDatabase();
   runApp(MyApp());
-  // BackgroundUpdater backgroundUpdater = BackgroundUpdater();
-  // DeleteDatabase();
   // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*helloAlarmID*/ 4, printHello, exact: true, rescheduleOnReboot: false);
-  // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*backgroundUpdaterID*/ 1 , backgroundUpdater.loop);
+  // 
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your a pplication.
   // static ItemFetcher itemFetcher = ItemFetcher();
+  
+  BackgroundUpdater backgroundUpdater = BackgroundUpdater();
+
   @override
   Widget build(BuildContext context) {
+    // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*backgroundUpdaterID*/ 2 ,printHello);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

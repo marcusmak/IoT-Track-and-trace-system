@@ -1,4 +1,7 @@
 import 'dart:isolate';
+
+// import 'package:toast/toast.dart';
+import 'package:flutter/cupertino.dart';
 class BackgroundUpdater{
   //void checkExist(){
   //   final DateTime now = DateTime.now();
@@ -6,11 +9,18 @@ class BackgroundUpdater{
   //   // print("");
   //   print("[$now] Check Existence! isolate=${isolateId} function='$checkExist'");
   // }
-  void loop() async {
-      final DateTime now = DateTime.now();
-      final int isolateId = Isolate.current.hashCode;
-      print("");
-      print("[$now] Looping right now! isolate=${isolateId} function='loop'");
-  }
+  // Func loop(BuildContext context){
+  //     return Future.sync(
+  //       (){
+  //         {
+  //           final DateTime now = DateTime.now();
+  //           final int isolateId = Isolate.current.hashCode;
+  //           Toast.show("[$now] Hello, in loop! isolate=${isolateId} function='$loop'", context);
+
+  //         };
+  //       }
+
+  //     );
+  // }
 
 }
