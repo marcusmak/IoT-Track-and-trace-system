@@ -1,4 +1,0 @@
-#Thu Dec 17 22:51:50 GMT 2020
-base.0=D\:\\FYP\\Software\\Flutter\\vb_v0\\build\\app\\intermediates\\dex\\debug\\out\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
