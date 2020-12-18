@@ -17,6 +17,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,10 +26,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.vb_v0.MainActivity;
 import com.example.vb_v0.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.lang.String;
+import java.util.Set;
 
 import io.flutter.Log;
 
@@ -50,6 +55,14 @@ public class BleConnector extends Service {
     private List<ScanFilter> filters;
     private BluetoothGatt mGatt;
 
+    private final IBinder binder = new LocalBinder();
+
+    public class LocalBinder extends Binder {
+        public BleConnector getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return BleConnector.this;
+        }
+    }
 
     @Nullable
     @Override
@@ -116,25 +129,25 @@ public class BleConnector extends Service {
                 public void run() {
                     mScanning = false;
                     if(Build.VERSION.SDK_INT >= 21) {
-                        mLEScanner.stopScan(mLeScanCallback);
+                        mLEScanner.stopScan(mScanCallback);
                     }else{
-                        mBluetoothAdapter.stopLeScan(mScanCallback);
+                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     }
-                    Log.d("BLE_Connection","Scanning period over...");
+                    stopSelf();
                 }
             },SCAN_PERIOD);
             mScanning = true;
             if(Build.VERSION.SDK_INT >= 21){
-                mLEScanner.startScan(mLeScanCallback);
+                mLEScanner.startScan(mScanCallback);
             }else{
-                mBluetoothAdapter.startLeScan(mScanCallback);
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
             };
         } else {
             mScanning = false;
             if(Build.VERSION.SDK_INT >= 21) {
-                mLEScanner.stopScan(mLeScanCallback);
+                mLEScanner.stopScan(mScanCallback);
             }else{
-                mBluetoothAdapter.stopLeScan(mScanCallback);
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
             }
         }
     }
@@ -142,18 +155,21 @@ public class BleConnector extends Service {
 //    private LeDeviceListAdapter leDeviceListAdapter;
 
     // Device scan callback.
-    private ScanCallback mLeScanCallback = Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP?
+    private ScanCallback mScanCallback = Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP?
             new ScanCallback() {
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     Log.d("BLE_Connection", "callbackType: "+String.valueOf(callbackType));
-                    Log.d("BLE_Connection", "result: " + result.toString());
+                    Log.d("", "result: " + result.toString());
                     BluetoothDevice btDevice = result.getDevice();
-                    connectToDevice(btDevice);
+                    addDevice(btDevice);
+
+//                    connectToDevice(btDevice);
                 }
                 @Override
                 public void onBatchScanResults(List<ScanResult> results) {
                     for (ScanResult sr : results) {
+                        addDevice(sr.getDevice());
                         Log.i("BLE_Connection","ScanResult - Results: " + sr.toString());
                     }
                 }
@@ -163,8 +179,28 @@ public class BleConnector extends Service {
                 }
             }:null;
 
+    private void returnDevice(BluetoothDevice device){
+        if(device.getName() == null){
+            return;
+        }
 
-    private BluetoothAdapter.LeScanCallback mScanCallback = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? new BluetoothAdapter.LeScanCallback() {
+        Intent broadcastIntent=new Intent(this, MainActivity.BleBroadcastReceiver.class);
+        Bundle bleDevice = new Bundle();
+        bleDevice.putString("bleName",device.getName());
+        bleDevice.putString("bleAddress",device.getAddress());
+        broadcastIntent.putExtras(bleDevice);
+        sendBroadcast(broadcastIntent);
+    }
+
+    private ArrayList<BluetoothDevice> ble_devices = new ArrayList<>();
+    private void addDevice(BluetoothDevice device){
+        if(!ble_devices.contains(device)) {
+            ble_devices.add(device);
+            returnDevice(device);
+        }
+    }
+
+    private BluetoothAdapter.LeScanCallback mLeScanCallback = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(final BluetoothDevice device, int rssi,
             byte[] scanRecord) {
@@ -172,7 +208,8 @@ public class BleConnector extends Service {
                     @Override
                     public void run() {
                         Log.i("BLE_Connection","onLeScan: " + device.getName());
-                        connectToDevice(device);
+                        addDevice(device);
+//                        connectToDevice(device);
                     }
                 });
             }

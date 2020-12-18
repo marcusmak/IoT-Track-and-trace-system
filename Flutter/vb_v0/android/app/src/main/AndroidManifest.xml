@@ -39,6 +39,9 @@
 <!--                <action android:name="android.intent.action.BOOT_COMPLETED"></action>-->
 <!--            </intent-filter>-->
 <!--        </receiver>-->
+        <receiver android:name=".MainActivity$BleBroadcastReceiver"
+            android:exported="false"
+            android:enabled="true"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

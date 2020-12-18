@@ -8,6 +8,8 @@ import 'ControllerClass/ItemFetcher.dart';
 import 'LoginPage.dart';
 import 'SettingPage.dart';
 import 'ScanPage.dart';
+
+import 'package:flutter/services.dart';
 // import 'main_template.dart';
 // import 'SignUp1.dart';
 import 'dart:isolate';
@@ -34,6 +36,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // AndroidAlarmManager.initialize();
   // LocalDataManager.DeleteDatabase();
+  
   LocalDataManager.InitialiseDatabase();
   runApp(MyApp());
   // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*helloAlarmID*/ 4, printHello, exact: true, rescheduleOnReboot: false);
@@ -48,6 +51,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*backgroundUpdaterID*/ 2 ,printHello);
     return MaterialApp(
       title: 'Flutter Demo',
@@ -76,7 +80,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: SettingPage(),
       routes: <String, WidgetBuilder>{
         '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),
