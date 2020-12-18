@@ -1,0 +1,51 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:1:1-16:12
+INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:1:1-16:12
+INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:1:1-16:12
+	package
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:2:3-50
+		INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:1:11-69
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:4:5-76
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:4:22-74
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:5:5-80
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:5:22-78
+uses-permission#android.permission.WAKE_LOCK
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:6:5-67
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:6:22-65
+application
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:7:5-15:19
+service#id.flutter.flutter_background_service.BackgroundService
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:8:9-53
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:8:18-51
+receiver#id.flutter.flutter_background_service.WatchdogReceiver
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:9:9-53
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:9:19-51
+receiver#id.flutter.flutter_background_service.BootReceiver
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:10:9-14:20
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:10:19-47
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:11:13-13:29
+action#android.intent.action.BOOT_COMPLETED
+ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:12:17-78
+	android:name
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml:12:25-76
+uses-sdk
+INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
+INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
+		ADDED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\Marcus\AppData\Local\Pub\Cache\hosted\pub.dartlang.org\flutter_background_service-0.0.1+18\android\src\main\AndroidManifest.xml
