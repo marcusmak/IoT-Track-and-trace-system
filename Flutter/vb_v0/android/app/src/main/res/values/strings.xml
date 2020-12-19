@@ -2,4 +2,5 @@
 <resources>
     <string name="ble_not_supported">Sorry, you device does not support BLE.</string>
     <string name="bluetooth_disabled">Please turn on Bluetooth</string>
+    <string name="package_name">com.example.vb_v0</string>
 </resources>

@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
+import 'package:vb_v0/main.dart';
 
 import 'Global_var.dart';
 
@@ -18,7 +20,7 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   //bridge to native code
   // bool _isScanning = false;
-  static const platform = const MethodChannel(CHANNEL);
+  // static const platform = const MethodChannel(BLE_CHANNEL);
   
 
   BleDevicesDialog mBleDevicesDialog = BleDevicesDialog();
@@ -76,19 +78,32 @@ class _SettingPageState extends State<SettingPage> {
                                 mBleDevicesDialog
                               );
                               try {
-                                final bool result = await  platform.invokeMethod('bleConnect');
+                                final bool result = await  blePlatform.invokeMethod('bleScan');
                                 response = result;
                               } on PlatformException catch (e) {
                                 print("Failed to Invoke: '${e.message}'.");
                                 // _isScanning = false;
                               }
-                              print("isScanning: " + (!response).toString());
+                              print("isAlrdyScanning: " + (!response).toString());
                                 // setState(() {
                                 //   // _isScanning = response;
                                 // });
                               // }
                             },
                             child: Text("Connect the bag")
+                          ),
+                          MaterialButton(
+                            color: Colors.white54,
+                            onPressed: () async{
+                              // try {
+                              //   if(await  blePlatform.invokeMethod('bleDisconnect',{"mAddress":MyApp.bluetoothDevice.mAddress})){
+                              MyApp.bluetoothDevice.disconnect().then((value) => value?MyApp.bluetoothDevice = null:null);
+                              //   }
+                              // } on PlatformException catch (e) {
+                              //   print("Failed to Invoke: '${e.message}'.");
+                              // }
+                            },
+                            child: Text("Disconnect the bag")
                           ),
                           //Logout button
                           GestureDetector(
@@ -146,22 +161,33 @@ class BleDevicesDialog extends StatefulWidget {
 
 
 class _BleDevicesDialogState extends State<BleDevicesDialog> {
-  static const platform = const MethodChannel(CHANNEL);
-  List<String> devicesName = List();
-  List<Widget> listOfItems(List<String> devicesName){
+  // static const platform = const MethodChannel(BLE_CHANNEL);
+  List<Map> devices = List();
+
+  List<Widget> listOfItems(List<Map> devices){
     List<Widget> results = new List();
-    devicesName.forEach((element) {
-      results.add(SimpleDialogItem( text:element));
+    devices.forEach((element) {
+      results.add(
+        SimpleDialogItem( 
+          text:element['mName'],
+          onPressed: () async{
+            MyApp.bluetoothDevice = BluetoothDevice(element['mName'],element['mAddress']);
+            if(!(await MyApp.bluetoothDevice.connect()))
+              MyApp.bluetoothDevice = null;
+          },
+        )
+      );
     });
     return results;    
   }
+
   @override
   void initState() {
     super.initState();
-    platform.setMethodCallHandler((call) {
+    blePlatform.setMethodCallHandler((call) {
         switch(call.method){
-          case 'test':
-            handleBleConnectCallback(call.arguments);
+          case 'scanResult':
+            handleBleScanCallback(call.arguments);
             print("scanned: " + call.arguments.toString());
             break;
           default:
@@ -175,26 +201,28 @@ class _BleDevicesDialogState extends State<BleDevicesDialog> {
   void deactivate() {
     // TODO: implement deactivate
     super.deactivate();
+    blePlatform.invokeMethod('bleStopScan');
     print("dialog deactivated ");
   }
 
-  void handleBleConnectCallback(String bleName){
-      if(!devicesName.contains(bleName))
+  void handleBleScanCallback(Map bleDescriptor){
+      if(!devices.contains(bleDescriptor))
         setState(() {
-          devicesName.add(bleName);
+          devices.add(bleDescriptor);
         });
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      children: listOfItems(devicesName),
+      children: listOfItems(devices),
     );
   }
   
 }
 
 class SimpleDialogItem extends StatelessWidget {
+  // static const platform = const MethodChannel(BLE_CHANNEL);
   const SimpleDialogItem({Key key, this.text, this.onPressed})
       : super(key: key);
 
@@ -214,13 +242,7 @@ class SimpleDialogItem extends StatelessWidget {
           // Icon(icon, size: 36.0, color: color),
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 16.0),
-            child: GestureDetector(
-              onTap: (){
-                //connect to device
-
-              },
-              child:Text(text)
-            ),
+            child: Text(text)
           ),
         ],
       ),

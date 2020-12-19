@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vb_v0/HomeComponents/Tabs.dart';
 import 'package:vb_v0/HelperComponents/BottomPrompt.dart';
+import 'package:vb_v0/main.dart';
+
+import 'Global_var.dart';
 
 /// This is the stateful widget that the main application instantiates.
 class HomePage extends StatefulWidget {
@@ -100,8 +104,9 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children:<Widget>[
                                 GestureDetector(
-                                  onTap: (){
+                                  onTap: ()async {
                                     print("add an item");
+                                    MyApp.bluetoothDevice?.fetchCharValue();
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),

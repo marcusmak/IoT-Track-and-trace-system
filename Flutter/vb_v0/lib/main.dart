@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
+import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
 import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your a pplication.
   // static ItemFetcher itemFetcher = ItemFetcher();
   
-  BackgroundUpdater backgroundUpdater = BackgroundUpdater();
+  static BluetoothDevice bluetoothDevice;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SettingPage(),
+      home: HomePage(),
       routes: <String, WidgetBuilder>{
         '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),

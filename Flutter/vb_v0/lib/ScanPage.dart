@@ -5,7 +5,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 
-import 'ControllerClass/BLEConnector.dart';
+// import 'ControllerClass/BLEConnector.dart';
 
 
 

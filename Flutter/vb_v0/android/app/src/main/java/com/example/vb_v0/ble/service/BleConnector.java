@@ -53,9 +53,16 @@ public class BleConnector extends Service {
 
     private ScanSettings settings;
     private List<ScanFilter> filters;
-    private BluetoothGatt mGatt;
-
+//    private BluetoothGatt mGatt;
+    private GattServiceHandler mGattServiceHandler;
     private final IBinder binder = new LocalBinder();
+    private ArrayList<BluetoothDevice> ble_devices;
+    private void addDevice(BluetoothDevice device){
+        if(!ble_devices.contains(device)) {
+            ble_devices.add(device);
+            returnDevice(device);
+        }
+    }
 
     public class LocalBinder extends Binder {
         public BleConnector getService() {
@@ -68,7 +75,7 @@ public class BleConnector extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d("BLE_Connection","onBind");
-        return null;
+        return binder;
     }
 
     @Override
@@ -83,6 +90,15 @@ public class BleConnector extends Service {
         Log.d("BLE_Connection","onCreate");
         this.mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         this.mBluetoothAdapter = mBluetoothManager.getAdapter();
+        this.ble_devices = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= 21) {
+            mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
+            settings = new ScanSettings.Builder()
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                    .build();
+            filters = new ArrayList<ScanFilter>();
+        };
+
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
             stopSelf();
@@ -92,15 +108,12 @@ public class BleConnector extends Service {
 //            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 //            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
-        if (Build.VERSION.SDK_INT >= 21) {
-            mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
-        }
-        scanLeDevice(true);
     }
 
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
+        Log.i("BLE_Connection","onReBind");
         if (Build.VERSION.SDK_INT >= 21) {
             mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
             settings = new ScanSettings.Builder()
@@ -108,51 +121,58 @@ public class BleConnector extends Service {
                     .build();
             filters = new ArrayList<ScanFilter>();
         }
-        scanLeDevice(true);
-
     }
 
     @Override
     public void onDestroy() {
-        if (mGatt == null) {
+        Log.i("BLE_Connection","onDestory");
+        if (mGattServiceHandler == null) {
             return;
         }
-        mGatt.close();
-        mGatt = null;
+        mGattServiceHandler.close();
+        mGattServiceHandler = null;
         super.onDestroy();
     }
 
-    private void scanLeDevice(final boolean enabled) {
+    public void scanLeDevice(final boolean enabled) {
+        ble_devices.clear();
         if(enabled){
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mScanning = false;
-                    if(Build.VERSION.SDK_INT >= 21) {
-                        mLEScanner.stopScan(mScanCallback);
-                    }else{
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if(!mScanning){
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //only stop when it is scanning and reaches timeout
+                        if(mScanning) {
+                            Log.d("BLE_Connection","stop scanning");
+                            if (Build.VERSION.SDK_INT >= 21) {
+                                mLEScanner.stopScan(mScanCallback);
+                            } else {
+                                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                            }
+                            mScanning = false;
+                        }
                     }
-                    stopSelf();
+                }, SCAN_PERIOD);
+                mScanning = true;
+                if (Build.VERSION.SDK_INT >= 21) {
+                    mLEScanner.startScan(mScanCallback);
+                } else {
+                    mBluetoothAdapter.startLeScan(mLeScanCallback);
                 }
-            },SCAN_PERIOD);
-            mScanning = true;
-            if(Build.VERSION.SDK_INT >= 21){
-                mLEScanner.startScan(mScanCallback);
-            }else{
-                mBluetoothAdapter.startLeScan(mLeScanCallback);
-            };
+                ;
+            }
         } else {
-            mScanning = false;
-            if(Build.VERSION.SDK_INT >= 21) {
-                mLEScanner.stopScan(mScanCallback);
-            }else{
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if(mScanning) {
+                Log.d("BLE_Connection","stop scanning");
+                mScanning = false;
+                if(Build.VERSION.SDK_INT >= 21) {
+                    mLEScanner.stopScan(mScanCallback);
+                }else{
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                }
             }
         }
     }
-
-//    private LeDeviceListAdapter leDeviceListAdapter;
 
     // Device scan callback.
     private ScanCallback mScanCallback = Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP?
@@ -179,26 +199,20 @@ public class BleConnector extends Service {
                 }
             }:null;
 
+    //send data back to activity and then back to flutter
     private void returnDevice(BluetoothDevice device){
         if(device.getName() == null){
             return;
         }
 
         Intent broadcastIntent=new Intent(this, MainActivity.BleBroadcastReceiver.class);
-        Bundle bleDevice = new Bundle();
-        bleDevice.putString("bleName",device.getName());
-        bleDevice.putString("bleAddress",device.getAddress());
-        broadcastIntent.putExtras(bleDevice);
+//        Bundle bleDevice = new Bundle();
+//        bleDevice.putString("bleName",device.getName());
+//        bleDevice.putString("bleAddress",device.getAddress());
+        broadcastIntent.putExtra("scannedBLE",device);
         sendBroadcast(broadcastIntent);
     }
 
-    private ArrayList<BluetoothDevice> ble_devices = new ArrayList<>();
-    private void addDevice(BluetoothDevice device){
-        if(!ble_devices.contains(device)) {
-            ble_devices.add(device);
-            returnDevice(device);
-        }
-    }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback = Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? new BluetoothAdapter.LeScanCallback() {
             @Override
@@ -215,43 +229,48 @@ public class BleConnector extends Service {
             }
         }: null;
 
-    public void connectToDevice(BluetoothDevice device) {
-        if (mGatt == null) {
-            mGatt = device.connectGatt(this, false, gattCallback);
-            scanLeDevice(false);// will stop after first device detection
-        }
+
+
+
+
+
+
+
+
+    //not yet used
+    private BluetoothDevice addressToDevice(String address){
+
+        for(int i = 0; i < ble_devices.size(); ++i)
+            if(ble_devices.get(i).getAddress().equals(address))
+                return ble_devices.get(i);
+        return null;
     }
 
-    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.i("BLE_Connection","onConnectionStateChange: " +   "Status: " + status);
-            switch (newState) {
-                case BluetoothProfile.STATE_CONNECTED:
-                    Log.i("BLE_Connection","gattCallback: "+"STATE_CONNECTED");
-                    gatt.discoverServices();
-                    break;
-                case BluetoothProfile.STATE_DISCONNECTED:
-                    Log.e("BLE_Connection","gattCallback: " + "STATE_DISCONNECTED");
-                    break;
-                default:
-                    Log.e("BLE_Connection","gattCallback: " + "STATE_OTHER");
-            }
+    public GattServiceHandler connectToDevice(String address) {
+        BluetoothDevice temp = addressToDevice(address);
+        if(temp == null)
+            return null;
+        return connectToDevice(temp);
+    }
+
+    public GattServiceHandler connectToDevice(BluetoothDevice device) {
+        mGattServiceHandler = new GattServiceHandler(this,device);
+        if(mGattServiceHandler.connect()){
+            scanLeDevice(false);
+            return mGattServiceHandler;
+        };
+        return null;
+    }
+
+    public boolean disconnectToDevice(String address){
+        String connectedAddress = mGattServiceHandler.getConnectedDeviceAddress();
+        if(connectedAddress == null || !connectedAddress.equals(address)){
+            return false;
         }
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            List<BluetoothGattService> services = gatt.getServices();
-            Log.i("BLE_Connection","onServicesDiscovered: "+ services.toString());
-            gatt.readCharacteristic(services.get(1).getCharacteristics().get
-                    (0));
-        }
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic
-                                                 characteristic, int status) {
-            Log.i("BLE_Connection","onCharacteristicRead: " +  characteristic.toString());
-            gatt.disconnect();
-        }
-    };
+        mGattServiceHandler.close();
+        mGattServiceHandler = null;
+        return true;
+    }
+
 
 }
