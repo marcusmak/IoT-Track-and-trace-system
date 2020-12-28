@@ -4,8 +4,9 @@ import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
 import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/RegisterPage.dart';
 import 'package:vb_v0/HomePage.dart';
-import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
-import 'ControllerClass/ItemFetcher.dart';
+import 'package:vb_v0/AddItemPage.dart';
+// import 'package:vb_v0/ControllerClass/BackgroundUpdater.dart';
+// import 'ControllerClass/ItemFetcher.dart';
 import 'LoginPage.dart';
 import 'SettingPage.dart';
 import 'ScanPage.dart';
@@ -36,7 +37,7 @@ import 'dart:isolate';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // AndroidAlarmManager.initialize();
-  // LocalDataManager.DeleteDatabase();
+  LocalDataManager.DeleteDatabase();
   
   LocalDataManager.InitialiseDatabase();
   runApp(MyApp());
@@ -81,13 +82,14 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: ScanPage(),
       routes: <String, WidgetBuilder>{
         '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),
         '/home': (BuildContext context) => HomePage(),
         '/setting': (BuildContext context) => SettingPage(),
         '/scan_setup':(BuildContext context) => ScanPage(),
+        '/add_item' :(BuildContext context) => AddItemPage(),
       },
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );

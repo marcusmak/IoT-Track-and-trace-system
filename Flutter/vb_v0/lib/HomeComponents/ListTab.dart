@@ -12,10 +12,24 @@ import 'package:vb_v0/ModelClass/Item.dart';
 import 'package:vb_v0/HelperComponents/ExpandableCapsuleWidget.dart';
 import 'package:vb_v0/ModelClass/ItemContext.dart';
 
-class ListTab extends StatelessWidget{
+class ListTab extends StatefulWidget{
+  void Function(Widget) setBPContent;
+  void Function(bool) setBottomPrompt;
+  ListTab(this.setBPContent, this.setBottomPrompt);
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _ListTabState(this.setBPContent, this.setBottomPrompt);
+    throw UnimplementedError();
+  }
+  
+}
+
+class _ListTabState extends State{
     void Function(Widget) setBPContent;
     void Function(bool) setBottomPrompt;
-    ListTab(this.setBPContent, this.setBottomPrompt);
+    bool ready = false;
+    _ListTabState(this.setBPContent, this.setBottomPrompt);
 
     static const TextStyle titleStyle = 
       TextStyle(
@@ -26,7 +40,14 @@ class ListTab extends StatelessWidget{
     // const ListTab({Key key, this.style}) : super(key: key);
 
     @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ItemFetcher.initItems(()=>setState(()=>ready = true));
+  }
+    @override
     Widget build(BuildContext context) {
+      
       // print(style);
       return Expanded(
         child: SingleChildScrollView(
@@ -37,19 +58,19 @@ class ListTab extends StatelessWidget{
             children: <Widget>[
               ExpandableCapsuleWidget(
                 title: Text("Digital",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt),
+                child: ItemListContainer(setBPContent,setBottomPrompt,"Digital"),
               ),
               ExpandableCapsuleWidget(
                 title: Text("Sport",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt),
+                child: ItemListContainer(setBPContent,setBottomPrompt,"Sport"),
               ),
               ExpandableCapsuleWidget(
                 title: Text("Work",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt),
+                child: ItemListContainer(setBPContent,setBottomPrompt,"Work"),
               ),
               ExpandableCapsuleWidget(
                 title: Text("Clothes",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt),
+                child: ItemListContainer(setBPContent,setBottomPrompt,"Clothes"),
               ),
               
             ]
@@ -62,18 +83,18 @@ class ListTab extends StatelessWidget{
 class ItemListContainer extends StatefulWidget{
   void Function(Widget) setBPContent;
   void Function(bool) setBottomPrompt;
-  ItemListContainer(this.setBPContent,this.setBottomPrompt,{Key key}):super(key:key);
+  String classType;
 
+  ItemListContainer(this.setBPContent,this.setBottomPrompt,this.classType,{Key key}):super(key:key);
+  
   @override
   State<StatefulWidget> createState() => _ItemListContainerState();
 }
 
 class _ItemListContainerState extends State<ItemListContainer>{
-  ItemFetcher itemFetcher = ItemFetcher();
   @override
-  void initState() { 
+  void initState(){ 
     super.initState();
-    itemFetcher.initItems();
   }
   
   @override
@@ -84,22 +105,27 @@ class _ItemListContainerState extends State<ItemListContainer>{
   Widget tableBuilder(){
     List<TableRow> rows = [];
     int i = 0;
-    this.itemFetcher.items.forEach((element) {
-      if(i%2 == 0){
-        // print(i);
-        rows.add(
-          TableRow(
-            children:[
-              ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),
-            ]
-          )
-        );
-      }else{
-        // print(i);
-        rows.last.children.add(ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),);
-      }
-      ++i;
-    });
+    if(ItemFetcher.items != null){
+      ItemFetcher.items.forEach((element) {
+        if(element.classType == widget.classType){
+          if(i%2 == 0){
+            // print(i);
+            rows.add(
+              TableRow(
+                children:[
+                  ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),
+                ]
+              )
+            );
+          }else{
+            // print(i);
+            rows.last.children.add(ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),);
+          }
+        }
+
+        ++i;
+      });
+    }
     return SingleChildScrollView(
         child:
           Table(children: rows)
@@ -140,7 +166,7 @@ class ItemContainer extends StatelessWidget {
                               height:MediaQuery.of(context).size.height * 0.15 ,
                               width:MediaQuery.of(context).size.width * 0.5,
                               
-                              child: Image.asset(item.image, fit: BoxFit.fill),
+                              child: item.image!=null?Image.asset(item.image, fit: BoxFit.fill):Center(child:Text("No image")),
                             ),
                             Text(item.name,
                                   

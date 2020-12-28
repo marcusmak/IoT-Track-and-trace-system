@@ -22,7 +22,6 @@ import com.example.vb_v0.ble.service.BleConnector;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.google.gson.Gson;
 
 import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
@@ -159,6 +158,7 @@ public class MainActivity extends FlutterActivity {
             result.put("mAddress",btDevice.getAddress());
             Log.i("BLE_Connection","Scanned: " + result.toString());
 
+            //scan ble devices result
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {

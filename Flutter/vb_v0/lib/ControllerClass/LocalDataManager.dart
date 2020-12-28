@@ -28,8 +28,8 @@ class LocalDataManager{
     }else{
       print("exist database");
     }
-    database = await openDatabase(dbPath);
-    print("DATABASE: " + database.toString());
+    
+    // print("DATABASE: " + database.toString());
     // List<Map<String, dynamic>> results = await database.rawQuery('PRAGMA table_info(custom_rule);');
     // print(results);
 
@@ -58,6 +58,9 @@ class LocalDataManager{
 
   static Future AddCustomRule(ItemContext context, Item item) async{
     var dbPath = join(await getDatabasesPath(), 'localDB.db');
+    if(!database.isOpen || database == null){
+      database = await openDatabase(dbPath);
+    }
     print(dbPath);
     print("add custom rule ");
     var values = context.toMap();
@@ -65,6 +68,22 @@ class LocalDataManager{
     print(values);
     print(database);
     await database.insert('custom_rule', values);
+    database.close();
+    
+  }
+
+  static Future<List<Item>> fetchAllItems() async{
+    var dbPath = join(await getDatabasesPath(),'localDB.db');
+    print("fetching all items");
+    // if(!database.isOpen || database == null){
+    database = await openDatabase(dbPath);
+    // }
+    String sql = "SELECT iid, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN class ON Item.classID = class.classID";
+    List<Map<String,dynamic>> res = await database.rawQuery(sql);
+    database.close();
+    return res.map((element)=>new Item.fromMap(element)).toList();
+
+
   }
 
   static void BrosweData(String table) async{

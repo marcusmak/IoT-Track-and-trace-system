@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 
@@ -19,32 +20,34 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   static const TextStyle ts = TextStyle(fontSize: 32.0, color: Color.fromARGB(200, 255, 255, 255), fontWeight: FontWeight.bold);
   bool scanned = false;
-  ItemFetcher itemFetcher = ItemFetcher();
+  // ItemFetcher itemFetcher = ItemFetcher();
   // int testState = 0;
-  Duration scanTimeout = Duration(seconds: 10);
+  Duration scanTimeout = Duration(seconds: 1000);
   bool isTimeout = false;
 
   @override
   void initState() { 
     super.initState();
     scanItem();
-    Future.delayed((Duration(milliseconds: 5000)),(){
-      itemFetcher.initItems();
+    Future.delayed((Duration(milliseconds: 100)),(){
+      // ItemFetcher.initItems();
+      showDialog(context: context, builder:(context)=>
+        new BleDevicesDialog(context)
+      );
     });
     Timer(scanTimeout,handleTimeout);
   }
 
   void scanItem(){
     print("Scanning Item");
-    if(!itemFetcher.isEmpty())
+    if(!ItemFetcher.isEmpty())
       setState(() {
           scanned = true;
       });
     if(isTimeout)
       return;
+    ItemFetcher.fetchItems();
     Future.delayed((Duration(milliseconds: 1000)), ()=>scanItem());
-    // else
-
   }
 
   void handleTimeout(){
@@ -79,13 +82,13 @@ class _ScanPageState extends State<ScanPage> {
   Widget itemGridView(){
 
     return GridView.builder(
-      itemCount: itemFetcher.items.length,
+      itemCount: ItemFetcher.items.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
 
       ), 
       itemBuilder: (context, i){
-        Item temp = itemFetcher.items[i];
+        Item temp = ItemFetcher.items[i];
         return Padding(
           padding: EdgeInsets.symmetric(
             vertical:   MediaQuery.of(context).size.height*0.01,
@@ -113,6 +116,7 @@ class _ScanPageState extends State<ScanPage> {
       backgroundColor: Color.fromARGB(255, 30, 30, 30),
       body: scanned?itemGridView():scanningTextWidget(),
       floatingActionButton: isTimeout?FloatingActionButton(
+        backgroundColor: Colors.white60,
         onPressed: (){
           // print("transit to main page");
           Navigator.pushReplacementNamed(context, "/home");

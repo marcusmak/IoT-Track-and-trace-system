@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:vb_v0/HomeComponents/Tabs.dart';
 import 'package:vb_v0/HelperComponents/BottomPrompt.dart';
 import 'package:vb_v0/main.dart';
@@ -92,6 +93,12 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
               children:[
                   Scaffold(
+                    // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                    //  floatingActionButton: FloatingActionButton(
+                    //     onPressed: (){MyApp.bluetoothDevice?.fetchCharValue();},
+                    //     backgroundColor: Colors.white60,
+                    //     child: Icon(Icons.add),
+                    // ),
                     body: Scaffold(
                       backgroundColor: Color.fromARGB(255, 100, 100, 100),
                       body: Padding(
@@ -106,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                                 GestureDetector(
                                   onTap: ()async {
                                     print("add an item");
-                                    MyApp.bluetoothDevice?.fetchCharValue();
+                                    Navigator.pushNamed(context, "/add_item");
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),

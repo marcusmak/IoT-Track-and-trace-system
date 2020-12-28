@@ -8,15 +8,20 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import io.flutter.embedding.android.FlutterActivity;
+import com.google.gson.Gson;
 
+import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.Log;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
@@ -40,8 +45,12 @@ public class GattServiceHandler{
                     @Override
                     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
                         switch (call.method){
-                            case "fetchCharValue":
+//                            case "":
+//                                ;
+                            case "fetchItems":
+//                                mGatt.setCharacteristicNotification()
                                 mGatt.readCharacteristic(mService.getCharacteristic(UUID.fromString(CHARACTERISTIC_LIVE_UUID)));
+                                result.success(true);
                                 break;
                             default:
                                 Log.e("Gatt_Service","Wrong method invoked");
@@ -113,6 +122,21 @@ public class GattServiceHandler{
                                                  characteristic, int status) {
             byte[] stream = characteristic.getValue();
             Log.i("Gatt_service","onCharacteristicRead: " + ByteHelper.bytesToHex(stream) );
+
+//            for(BleResParser.SingleRfidRes rfidTag : BleResParser.parseRes(stream)){
+
+//            }
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    // Call the desired channel message here.
+                    Log.i("Gatt_service","RFID Res: " + new Gson().toJson(BleResParser.parse2BleRes(stream)) );
+                    new MethodChannel(MainActivity.mFlutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL)
+                            .invokeMethod("fetchItemsRes",BleResParser.parse2BleRes(stream));
+                }
+            });
+
         }
     };
 

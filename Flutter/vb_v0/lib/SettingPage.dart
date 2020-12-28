@@ -23,9 +23,6 @@ class _SettingPageState extends State<SettingPage> {
   // static const platform = const MethodChannel(BLE_CHANNEL);
   
 
-  BleDevicesDialog mBleDevicesDialog = BleDevicesDialog();
-
-
   @override
   Widget build(BuildContext context) {
     // if(devicesName.isNotEmpty){
@@ -75,15 +72,9 @@ class _SettingPageState extends State<SettingPage> {
                               bool response = false;
                               // if(_isScanning){
                               showDialog(context: context, builder:(context)=>
-                                mBleDevicesDialog
+                                new BleDevicesDialog(context)
                               );
-                              try {
-                                final bool result = await  blePlatform.invokeMethod('bleScan');
-                                response = result;
-                              } on PlatformException catch (e) {
-                                print("Failed to Invoke: '${e.message}'.");
-                                // _isScanning = false;
-                              }
+
                               print("isAlrdyScanning: " + (!response).toString());
                                 // setState(() {
                                 //   // _isScanning = response;
@@ -148,104 +139,5 @@ class _SettingPageState extends State<SettingPage> {
           
           
       );
-  }
-}
-
-class BleDevicesDialog extends StatefulWidget {
-  BleDevicesDialog({Key key}) : super(key: key);
-
-  @override
-  _BleDevicesDialogState createState() => _BleDevicesDialogState();
-}
-
-
-
-class _BleDevicesDialogState extends State<BleDevicesDialog> {
-  // static const platform = const MethodChannel(BLE_CHANNEL);
-  List<Map> devices = List();
-
-  List<Widget> listOfItems(List<Map> devices){
-    List<Widget> results = new List();
-    devices.forEach((element) {
-      results.add(
-        SimpleDialogItem( 
-          text:element['mName'],
-          onPressed: () async{
-            MyApp.bluetoothDevice = BluetoothDevice(element['mName'],element['mAddress']);
-            if(!(await MyApp.bluetoothDevice.connect()))
-              MyApp.bluetoothDevice = null;
-          },
-        )
-      );
-    });
-    return results;    
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    blePlatform.setMethodCallHandler((call) {
-        switch(call.method){
-          case 'scanResult':
-            handleBleScanCallback(call.arguments);
-            print("scanned: " + call.arguments.toString());
-            break;
-          default:
-            print('TestFairy: Ignoring invoke from native. This normally shouldn\'t happen.');
-        }
-        return;
-    });
-  }
-  
-  @override
-  void deactivate() {
-    // TODO: implement deactivate
-    super.deactivate();
-    blePlatform.invokeMethod('bleStopScan');
-    print("dialog deactivated ");
-  }
-
-  void handleBleScanCallback(Map bleDescriptor){
-      if(!devices.contains(bleDescriptor))
-        setState(() {
-          devices.add(bleDescriptor);
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      children: listOfItems(devices),
-    );
-  }
-  
-}
-
-class SimpleDialogItem extends StatelessWidget {
-  // static const platform = const MethodChannel(BLE_CHANNEL);
-  const SimpleDialogItem({Key key, this.text, this.onPressed})
-      : super(key: key);
-
-  // final IconData icon;
-  // final Color color;
-  final String text;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialogOption(
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Icon(icon, size: 36.0, color: color),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16.0),
-            child: Text(text)
-          ),
-        ],
-      ),
-    );
   }
 }

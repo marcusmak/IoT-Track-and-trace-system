@@ -48,8 +48,8 @@ public class BleConnector extends Service {
     private boolean mScanning;
     private Handler mHandler = new Handler();;
 
-    // Stops scanning after 10 seconds.
-    private static final long SCAN_PERIOD = 10000;
+    // Stops scanning after 60 seconds.
+    private static final long SCAN_PERIOD = 1000 * 60;
 
     private ScanSettings settings;
     private List<ScanFilter> filters;
@@ -221,7 +221,7 @@ public class BleConnector extends Service {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i("BLE_Connection","onLeScan: " + device.getName());
+//                        Log.i("BLE_Connection","onLeScan: " + device.getName());
                         addDevice(device);
 //                        connectToDevice(device);
                     }
