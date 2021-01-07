@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -125,11 +126,19 @@ class _ItemListContainerState extends State<ItemListContainer>{
 
         ++i;
       });
+
+
+      // to ensure that every row have same number of elements
+      if(rows.isNotEmpty && rows.last.children.length %2 != 0){
+        rows.last.children.add(Container());
+      }
+
     }
-    return SingleChildScrollView(
-        child:
-          Table(children: rows)
-        );
+    if(rows.isNotEmpty) {
+      return SingleChildScrollView(child: Table(children: rows));
+    } else{
+      return Text("No items");
+    }
   }
 }
 
@@ -166,7 +175,7 @@ class ItemContainer extends StatelessWidget {
                               height:MediaQuery.of(context).size.height * 0.15 ,
                               width:MediaQuery.of(context).size.width * 0.5,
                               
-                              child: item.image!=null?Image.asset(item.image, fit: BoxFit.fill):Center(child:Text("No image")),
+                              child: item.image!=null?Image.memory(base64Decode(item.image), fit: BoxFit.fill):Center(child:Text("No image")),
                             ),
                             Text(item.name,
                                   

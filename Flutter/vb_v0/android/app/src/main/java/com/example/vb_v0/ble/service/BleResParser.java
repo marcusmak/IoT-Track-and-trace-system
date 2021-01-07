@@ -14,9 +14,10 @@ import io.flutter.Log;
 public class BleResParser {
     private static byte[] getBtyes(byte[] input, int start, int len){
         byte[] result = new byte [len];
-        for(int i = 0; i< len; ++i){
-            result[i] = input[i+start];
-        }
+        if(start + len < input.length)
+            for(int i = 0; i< len; ++i){
+                result[i] = input[i+start];
+            }
         return result;
     }
     public static List<String> parse2BleRes(byte[] res){

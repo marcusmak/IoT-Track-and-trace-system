@@ -87,9 +87,23 @@ public class BleConnector extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+            stopSelf();
+            return;
+        }
+
+
         Log.d("BLE_Connection","onCreate");
         this.mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         this.mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Toast.makeText(this,R.string.bluetooth_disabled, Toast.LENGTH_LONG).show();
+//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
         this.ble_devices = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= 21) {
             mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
@@ -99,15 +113,7 @@ public class BleConnector extends Service {
             filters = new ArrayList<ScanFilter>();
         };
 
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            stopSelf();
-        }
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Toast.makeText(this,R.string.bluetooth_disabled, Toast.LENGTH_LONG).show();
-//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
+
     }
 
     @Override

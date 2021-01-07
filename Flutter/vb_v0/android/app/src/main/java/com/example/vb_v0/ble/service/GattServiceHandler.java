@@ -47,10 +47,15 @@ public class GattServiceHandler{
                         switch (call.method){
 //                            case "":
 //                                ;
-                            case "fetchItems":
+                            case "scanTags":
 //                                mGatt.setCharacteristicNotification()
-                                mGatt.readCharacteristic(mService.getCharacteristic(UUID.fromString(CHARACTERISTIC_LIVE_UUID)));
-                                result.success(true);
+                                if(mGatt != null) {
+                                    mGatt.readCharacteristic(mService.getCharacteristic(UUID.fromString(CHARACTERISTIC_LIVE_UUID)));
+                                    result.success(true);
+                                }else{
+//                                    result.error();
+                                    result.success(false);
+                                }
                                 break;
                             default:
                                 Log.e("Gatt_Service","Wrong method invoked");
@@ -69,7 +74,8 @@ public class GattServiceHandler{
 
     public void close(){
         this.disconnect();
-        mGatt.close();
+        if(mGatt != null)
+            mGatt.close();
     }
 
     public boolean connect(){
@@ -131,9 +137,12 @@ public class GattServiceHandler{
                 @Override
                 public void run() {
                     // Call the desired channel message here.
-                    Log.i("Gatt_service","RFID Res: " + new Gson().toJson(BleResParser.parse2BleRes(stream)) );
-                    new MethodChannel(MainActivity.mFlutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL)
-                            .invokeMethod("fetchItemsRes",BleResParser.parse2BleRes(stream));
+                    List<String> result = BleResParser.parse2BleRes(stream);
+                    if(result != null){
+                        Log.i("Gatt_service","RFID Res: " + new Gson().toJson(result) );
+                        new MethodChannel(MainActivity.mFlutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL)
+                                .invokeMethod("scanTagsRes", result);
+                    }
                 }
             });
 

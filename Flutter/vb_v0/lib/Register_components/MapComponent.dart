@@ -45,12 +45,12 @@ class _MapComponentState extends State with AutomaticKeepAliveClientMixin{
     //   if(value.statusCode == 201){
     //     //TODO
     //     //store username and password and userid //jwt? //session?
-    //     Navigator.of(context).pushReplacementNamed("/scan_setup");
+    //     Navigator.of(context).pushReplacementNamed("/scan_page");
 
 
     //   }
     // });
-     Navigator.of(context).pushReplacementNamed("/scan_setup");
+     Navigator.of(context).pushReplacementNamed("/scan_page");
   }
 
   @override

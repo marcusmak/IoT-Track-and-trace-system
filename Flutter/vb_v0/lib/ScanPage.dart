@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
+import 'package:vb_v0/ControllerClass/ItemScanner.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 
 // import 'ControllerClass/BLEConnector.dart';
@@ -24,10 +28,21 @@ class _ScanPageState extends State<ScanPage> {
   // int testState = 0;
   Duration scanTimeout = Duration(seconds: 1000);
   bool isTimeout = false;
+  List<Item> scannedItems;
+  ItemScanner _itemScanner;
 
   @override
   void initState() { 
     super.initState();
+    _itemScanner = ItemScanner((e)=>{setState((){
+      e.forEach((newElement) {
+        if(scannedItems.every((element) => element.EPC != newElement['EPC'])){
+          scannedItems.add(Item.fromMap(newElement));
+          // scannedItems.add(newElement);
+        }
+      });
+    })});
+    scannedItems = List();
     scanItem();
     Future.delayed((Duration(milliseconds: 100)),(){
       // ItemFetcher.initItems();
@@ -39,15 +54,18 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   void scanItem(){
-    print("Scanning Item");
-    if(!ItemFetcher.isEmpty())
-      setState(() {
-          scanned = true;
-      });
-    if(isTimeout)
-      return;
-    ItemFetcher.fetchItems();
-    Future.delayed((Duration(milliseconds: 1000)), ()=>scanItem());
+    setState((){
+      scannedItems.add(Item(EPC:"1234",name:"fake item",classID:"d00001",className:"Fake Class", classType: "Digital"));
+      scannedItems.add(Item(EPC:"1224",name:"fake item2",classID:"d00001",className:"Fake Class", classType: "Digital"));
+    });
+    // if(!ItemFetcher.isEmpty())
+    //   setState(() {
+    //       scanned = true;
+    //   });
+    // if(isTimeout)
+    //   return;
+    // _itemScanner.scanTags();
+    // Future.delayed((Duration(milliseconds: 1000)), ()=>scanItem());
   }
 
   void handleTimeout(){
@@ -72,28 +90,54 @@ class _ScanPageState extends State<ScanPage> {
                     // displayFullTextOnTap: true,
                     // stopPauseOnTap: true
                   ),
-                  //TODO: test bluetooth function
-                  // BLEConnector() 
+                  // TODO: test bluetooth function
+                  // BLEConnector()
 
                 ],)
               );
   }
 
   Widget itemGridView(){
-
+    // return Center(child:Text("ITEM DETECTED"));
     return GridView.builder(
-      itemCount: ItemFetcher.items.length,
+      itemCount: scannedItems.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
 
-      ), 
+      ),
       itemBuilder: (context, i){
-        Item temp = ItemFetcher.items[i];
+
+      Item temp = scannedItems[i];
+      List<Widget> _itemDetails = [
+        Text(temp.classType,style:ts),
+        Text(temp.name!=null?temp.name:temp.className,),
+
+      ];
+      if (temp.image!=null)
+        _itemDetails.add(Image.memory(base64Decode(temp.image), fit: BoxFit.scaleDown,));
+
+
         return Padding(
           padding: EdgeInsets.symmetric(
             vertical:   MediaQuery.of(context).size.height*0.01,
             horizontal: MediaQuery.of(context).size.width*0.025,
           ),
+          child: GestureDetector(
+
+            // padding: EdgeInsets.zero,
+              onTap: (){
+                Navigator.pushNamed(context, "/add_item",
+                    arguments:
+                    {
+                      "item": scannedItems[i],
+                      "setItemCallback": (Item item){
+
+                        print("set item callback triggered: " + item.toString());
+                        setState(() => scannedItems[i] = item);
+                      }
+                    }
+                );
+              },
           child: Container(
             padding: EdgeInsets.symmetric(
               vertical:   MediaQuery.of(context).size.height*0.01,
@@ -103,8 +147,13 @@ class _ScanPageState extends State<ScanPage> {
               borderRadius: BorderRadius.circular(25.0),
               color:Colors.blueGrey,
             ),
-            child: Text(temp.name,style: ts,)
-          ),  
+            child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _itemDetails,
+              )
+            )
+          ),
         );
       }
     );
@@ -112,19 +161,23 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
+    if(scannedItems != null && scannedItems.isNotEmpty){
+      print("rebuilding scan page: " +  scannedItems.toString());
+    }
+    print("rebuild");
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 30, 30, 30),
-      body: scanned?itemGridView():scanningTextWidget(),
-      floatingActionButton: isTimeout?FloatingActionButton(
+      body: (scannedItems != null && scannedItems.isNotEmpty)?itemGridView():scanningTextWidget(),
+      floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white60,
-        onPressed: (){
+        onPressed: ()async{
           // print("transit to main page");
+          await LocalDataManager.putAllItems(scannedItems);
           Navigator.pushReplacementNamed(context, "/home");
         },
         child: Icon(Icons.navigate_next, color: Colors.white,size: 50,),
         
-      ):null
-            
+      )
       
     );
   }

@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                                 GestureDetector(
                                   onTap: ()async {
                                     print("add an item");
-                                    Navigator.pushNamed(context, "/add_item");
+                                    Navigator.pushNamed(context, "/scan_page");
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.05),

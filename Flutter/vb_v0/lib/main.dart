@@ -88,10 +88,24 @@ class MyApp extends StatelessWidget {
         '/register' : (BuildContext context) => RegisterPage(),
         '/home': (BuildContext context) => HomePage(),
         '/setting': (BuildContext context) => SettingPage(),
-        '/scan_setup':(BuildContext context) => ScanPage(),
-        '/add_item' :(BuildContext context) => AddItemPage(),
+        '/scan_page':(BuildContext context) => ScanPage(),
+        // '/add_item' :(BuildContext context) => AddItemPage(),
       },
+      onGenerateRoute: _getRoute,
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+
+  Route<dynamic> _getRoute(RouteSettings settings){
+    if(settings.name == "/add_item"){
+      return _buildRoute(settings,new AddItemPage(settings.arguments));
+    }
+  }
+
+  MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder){
+    return new MaterialPageRoute(
+      settings: settings,
+      builder:  (ctx)=>builder,
     );
   }
 }

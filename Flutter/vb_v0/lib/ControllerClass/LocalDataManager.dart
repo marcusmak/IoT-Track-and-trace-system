@@ -64,7 +64,7 @@ class LocalDataManager{
     print(dbPath);
     print("add custom rule ");
     var values = context.toMap();
-    values.putIfAbsent("item_id", () => item.iid);
+    values.putIfAbsent("item_id", () => item.EPC);
     print(values);
     print(database);
     await database.insert('custom_rule', values);
@@ -78,15 +78,32 @@ class LocalDataManager{
     // if(!database.isOpen || database == null){
     database = await openDatabase(dbPath);
     // }
-    String sql = "SELECT iid, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN class ON Item.classID = class.classID";
+    String sql = "SELECT EPC, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN custom_class ON Item.classID = custom_class.classID";
     List<Map<String,dynamic>> res = await database.rawQuery(sql);
     database.close();
     return res.map((element)=>new Item.fromMap(element)).toList();
+  }
 
-
+  static Future<bool> putAllItems(List<Item> items) async{
+    var dbPath = join(await getDatabasesPath(), 'localDB.db');
+    print("put all items");
+    database = await openDatabase(dbPath);
+    for(Item item in items){
+      try {
+        print(item.toString());
+        await database.insert("Item", item.toMap());
+      }catch(e){
+        print(e);
+      }
+    }
+    print("done putting all items");
+    database.close();
   }
 
   static void BrosweData(String table) async{
+    var dbPath = join(await getDatabasesPath(), 'localDB.db');
+    database = await openDatabase(dbPath);
     print(await database.query(table));
+    database.close();
   }
 }
