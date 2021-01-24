@@ -49,6 +49,7 @@ class BluetoothDevice{
 
   static void scan() async{
     try {
+      print("scanning ble");
       final bool result = await  blePlatform.invokeMethod('bleScan');
       // response = result;
     } on PlatformException catch (e) {

@@ -20,8 +20,8 @@ public class BleResParser {
             }
         return result;
     }
-    public static List<String> parse2BleRes(byte[] res){
-        List<SingleRfidRes> listOfCustomClass = parseRes(res);
+    public static ArrayList<String> parse2BleRes(byte[] res){
+        ArrayList<SingleRfidRes> listOfCustomClass = parseRes(res);
         Set<String> result = new HashSet<>();
         if( listOfCustomClass != null){
             for(SingleRfidRes element:listOfCustomClass) {
@@ -35,13 +35,16 @@ public class BleResParser {
         };
         return null;
     }
-    public static List<SingleRfidRes> parseRes(byte[] res){
-        List<SingleRfidRes> result = new ArrayList<>();
-        for(int i = 0; i < res.length; ++i){
+    public static ArrayList<SingleRfidRes> parseRes(byte[] res){
+        ArrayList<SingleRfidRes> result = new ArrayList<>();
+        for(int i = 0; i < res.length - SingleRfidRes.LENGTH; ++i){
             if(res[i] == (byte) 0xBB){
-                if(res[i+1] == (byte) 0x02) {
+                if(res[i+1] == (byte) 0x02 && res[i+23] == (byte) 0x7E) {
                     Log.d("BleResParser", "start of a new rfid res");
-                    result.add(new SingleRfidRes(getBtyes(res, i, 24)));
+                    SingleRfidRes temp = new SingleRfidRes(getBtyes(res, i, 24));
+                    Log.d("BleResParser", ByteHelper.bytesToHex(temp.EPC,true));
+                    if(temp.EPC[0] == (byte) 0xE2)
+                        result.add(temp);
                 }
             }
         }
@@ -50,10 +53,13 @@ public class BleResParser {
         return result;
     }
     static public class SingleRfidRes{
+        public static final int LENGTH = 24;
         private int RSSI;
         private byte[] PC = new byte[2];
         private byte[] EPC = new byte[12];
         private byte[] CRC = new byte[2];
+        private byte checksum;
+
         public SingleRfidRes(byte[] res) {
             RSSI  = res[5];
             PC[0] = res[6];
@@ -62,6 +68,7 @@ public class BleResParser {
                 EPC[i] = res[8 + i];
             CRC[0] = res[20];
             CRC[1] = res[21];
+            checksum = res[LENGTH-1];
         }
 
         @Override

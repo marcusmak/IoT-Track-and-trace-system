@@ -14,19 +14,26 @@
                 android:name=".alarm.service.RunAfterBootService"
                 android:enabled="true"
                 android:exported="true"></service>
-            <service android:name=".ble.service.BleConnector"
+
+            <service android:name=".ble.service.BleScanner"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
                 android:enabled="true"
                 android:exported="true"></service>
 
-        <!--            <receiver-->
-<!--                android:name=".alarm.service.BootDeviceReceiver"-->
-<!--                android:enabled="true"-->
-<!--                android:exported="true">-->
-<!--                <intent-filter>-->
-<!--                    <action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-<!--                </intent-filter>-->
-<!--            </receiver>-->
+            <receiver
+                android:name=".alarm.service.BootDeviceReceiver"
+                android:enabled="true"
+                android:exported="true">
+                <intent-filter>
+                    <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                </intent-filter>
+                <intent-filter>
+                    <action android:name="ACTION_CANCEL_SERVICE"/>
+                </intent-filter>
+                <intent-filter>
+                    <action android:name="DEBUG_ALARM_SERVICE"/>
+                </intent-filter>
+            </receiver>
 <!--        <service-->
 <!--            android:name="io.flutter.plugins.androidalarmmanager.AlarmService"-->
 <!--            android:permission="android.permission.BIND_JOB_SERVICE"-->
@@ -43,7 +50,19 @@
 <!--        </receiver>-->
         <receiver android:name=".MainActivity$BleBroadcastReceiver"
             android:exported="false"
-            android:enabled="true"/>
+            android:enabled="true">
+            <intent-filter>
+                <action android:name=".ble.service.BleScanner.Broadcast"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".alarm.service.util.BagActivityManager"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name=".ble.service.GattService.Broadcast"/>
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

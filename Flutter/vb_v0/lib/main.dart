@@ -39,7 +39,9 @@ void main() async {
   // AndroidAlarmManager.initialize();
   LocalDataManager.DeleteDatabase();
   
+
   LocalDataManager.InitialiseDatabase();
+  
   runApp(MyApp());
   // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*helloAlarmID*/ 4, printHello, exact: true, rescheduleOnReboot: false);
   // 

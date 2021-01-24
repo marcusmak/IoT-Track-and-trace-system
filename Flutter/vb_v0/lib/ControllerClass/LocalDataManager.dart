@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:vb_v0/ModelClass/ItemContext.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 import 'package:flutter/widgets.dart'; //required.
+import 'package:path_provider/path_provider.dart';
 
 class LocalDataManager{
   static Database database;
@@ -64,7 +65,7 @@ class LocalDataManager{
     print(dbPath);
     print("add custom rule ");
     var values = context.toMap();
-    values.putIfAbsent("item_id", () => item.EPC);
+    values.putIfAbsent("EPC", () => item.EPC);
     print(values);
     print(database);
     await database.insert('custom_rule', values);
@@ -91,19 +92,33 @@ class LocalDataManager{
     for(Item item in items){
       try {
         print(item.toString());
+        print(item.toMap().toString());
         await database.insert("Item", item.toMap());
       }catch(e){
+        print("Error on putting in databse");
         print(e);
       }
     }
     print("done putting all items");
     database.close();
+    await BrosweData("Item");
   }
+
+  static void DownloadDatabase() async{
+    var dbPath = join(await getDatabasesPath(), 'localDB.db');
+    Directory temp = await getExternalStorageDirectory();
+    print(temp.path);
+    print(dbPath);
+    await temp.create(recursive: true);
+    File(dbPath).copy(temp.path+'/localDB.db');
+  }
+
 
   static void BrosweData(String table) async{
     var dbPath = join(await getDatabasesPath(), 'localDB.db');
+    
     database = await openDatabase(dbPath);
-    print(await database.query(table));
+    print("Broswing Table " + table.toString() + (await database.query(table)).toString());
     database.close();
   }
 }

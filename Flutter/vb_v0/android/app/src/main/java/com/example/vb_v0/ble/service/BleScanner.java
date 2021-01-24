@@ -3,12 +3,7 @@ package com.example.vb_v0.ble.service;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -16,10 +11,10 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
@@ -30,16 +25,12 @@ import com.example.vb_v0.MainActivity;
 import com.example.vb_v0.R;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.lang.String;
-import java.util.Set;
 
 import io.flutter.Log;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
-
-public class BleConnector extends Service {
+public class BleScanner extends Service {
     private static final int REQUEST_ENABLE_BT = 1;
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
@@ -65,9 +56,9 @@ public class BleConnector extends Service {
     }
 
     public class LocalBinder extends Binder {
-        public BleConnector getService() {
+        public BleScanner getService() {
             // Return this instance of LocalService so clients can call public methods
-            return BleConnector.this;
+            return BleScanner.this;
         }
     }
 
@@ -75,6 +66,12 @@ public class BleConnector extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d("BLE_Connection","onBind");
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_LONG).show();
+            Log.d("BLE_Connection","stop service immediately");
+            stopService(intent);
+            return null;
+        }
         return binder;
     }
 
@@ -87,6 +84,7 @@ public class BleConnector extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
             stopSelf();
@@ -94,7 +92,7 @@ public class BleConnector extends Service {
         }
 
 
-        Log.d("BLE_Connection","onCreate");
+
         this.mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         this.mBluetoothAdapter = mBluetoothManager.getAdapter();
 
@@ -127,6 +125,9 @@ public class BleConnector extends Service {
                     .build();
             filters = new ArrayList<ScanFilter>();
         }
+        if(ble_devices == null){
+            this.ble_devices = new ArrayList<>();
+        }
     }
 
     @Override
@@ -141,7 +142,8 @@ public class BleConnector extends Service {
     }
 
     public void scanLeDevice(final boolean enabled) {
-        ble_devices.clear();
+        if(ble_devices != null)
+            ble_devices.clear();
         if(enabled){
             if(!mScanning){
                 mHandler.postDelayed(new Runnable() {
@@ -211,7 +213,7 @@ public class BleConnector extends Service {
             return;
         }
 
-        Intent broadcastIntent=new Intent(this, MainActivity.BleBroadcastReceiver.class);
+        Intent broadcastIntent = new Intent(this, MainActivity.BleBroadcastReceiver.class);
 //        Bundle bleDevice = new Bundle();
 //        bleDevice.putString("bleName",device.getName());
 //        bleDevice.putString("bleAddress",device.getAddress());
@@ -245,11 +247,11 @@ public class BleConnector extends Service {
 
     //not yet used
     private BluetoothDevice addressToDevice(String address){
-
-        for(int i = 0; i < ble_devices.size(); ++i)
-            if(ble_devices.get(i).getAddress().equals(address))
-                return ble_devices.get(i);
-        return null;
+        return mBluetoothAdapter.getRemoteDevice(address);
+//        for(int i = 0; i < ble_devices.size(); ++i)
+//            if(ble_devices.get(i).getAddress().equals(address))
+//                return ble_devices.get(i);
+//        return null;
     }
 
     public GattServiceHandler connectToDevice(String address) {
@@ -260,13 +262,23 @@ public class BleConnector extends Service {
     }
 
     public GattServiceHandler connectToDevice(BluetoothDevice device) {
-        mGattServiceHandler = new GattServiceHandler(this,device);
+        mGattServiceHandler = GattServiceHandler.getInstance(this,device);
         if(mGattServiceHandler.connect()){
-            scanLeDevice(false);
+            if(mScanning)
+                scanLeDevice(false);
+            serialiseBLE(device.getAddress());
             return mGattServiceHandler;
         };
         return null;
     }
+
+    public void serialiseBLE(String address){
+        SharedPreferences lastBLEPre = getSharedPreferences(getString(R.string.package_name),Context.MODE_PRIVATE);
+        SharedPreferences.Editor bleEdit = lastBLEPre.edit();
+        bleEdit.putString(getString(R.string.last_ble_connection),address);
+        bleEdit.apply();
+    }
+
 
     public boolean disconnectToDevice(String address){
         String connectedAddress = mGattServiceHandler.getConnectedDeviceAddress();

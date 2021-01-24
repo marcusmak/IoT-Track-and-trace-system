@@ -9,6 +9,7 @@ import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
 import 'package:vb_v0/ControllerClass/ItemScanner.dart';
 import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
+import 'package:vb_v0/main.dart';
 
 // import 'ControllerClass/BLEConnector.dart';
 
@@ -34,14 +35,18 @@ class _ScanPageState extends State<ScanPage> {
   @override
   void initState() { 
     super.initState();
-    _itemScanner = ItemScanner((e)=>{setState((){
-      e.forEach((newElement) {
-        if(scannedItems.every((element) => element.EPC != newElement['EPC'])){
-          scannedItems.add(Item.fromMap(newElement));
-          // scannedItems.add(newElement);
-        }
-      });
-    })});
+    _itemScanner = ItemScanner((e)=>{
+      if(this.mounted){
+        setState((){
+          e.forEach((newElement) {
+            if(scannedItems.every((element) => element.EPC != newElement['EPC'])){
+              scannedItems.add(Item.fromMap(newElement));
+              // scannedItems.add(newElement);
+            }
+          });
+        })
+      }
+    });
     scannedItems = List();
     scanItem();
     Future.delayed((Duration(milliseconds: 100)),(){
@@ -51,21 +56,23 @@ class _ScanPageState extends State<ScanPage> {
       );
     });
     Timer(scanTimeout,handleTimeout);
+    // setState((){
+    //   scannedItems.add(Item(EPC:"1234",name:"fake item",classID:"d00001",className:"Fake Class", classType: "Digital"));
+    //   scannedItems.add(Item(EPC:"1224",name:"fake item2",classID:"d00001",className:"Fake Class", classType: "Digital"));
+    // });
   }
 
   void scanItem(){
-    setState((){
-      scannedItems.add(Item(EPC:"1234",name:"fake item",classID:"d00001",className:"Fake Class", classType: "Digital"));
-      scannedItems.add(Item(EPC:"1224",name:"fake item2",classID:"d00001",className:"Fake Class", classType: "Digital"));
-    });
-    // if(!ItemFetcher.isEmpty())
-    //   setState(() {
-    //       scanned = true;
-    //   });
-    // if(isTimeout)
-    //   return;
-    // _itemScanner.scanTags();
-    // Future.delayed((Duration(milliseconds: 1000)), ()=>scanItem());
+
+    if(isTimeout)
+      return;
+    if(!ItemFetcher.isEmpty())
+      setState(() {
+          scanned = true;
+      });
+    // print("scanning from " + MyApp.bluetoothDevice.toString());
+    _itemScanner.scanTags();
+    Future.delayed((Duration(milliseconds: 1000)), ()=>scanItem());
   }
 
   void handleTimeout(){
@@ -114,7 +121,7 @@ class _ScanPageState extends State<ScanPage> {
 
       ];
       if (temp.image!=null)
-        _itemDetails.add(Image.memory(base64Decode(temp.image), fit: BoxFit.scaleDown,));
+        _itemDetails.add(Container(child:Image.file(File(temp.image), fit: BoxFit.scaleDown,)));
 
 
         return Padding(
@@ -174,6 +181,9 @@ class _ScanPageState extends State<ScanPage> {
           // print("transit to main page");
           await LocalDataManager.putAllItems(scannedItems);
           Navigator.pushReplacementNamed(context, "/home");
+          setState(() {
+            isTimeout = true;
+          });
         },
         child: Icon(Icons.navigate_next, color: Colors.white,size: 50,),
         

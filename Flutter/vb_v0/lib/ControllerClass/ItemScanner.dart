@@ -10,7 +10,7 @@ import '../Global_var.dart';
 class ItemScanner{
   void Function(List<Map<String,dynamic>>) setMaps;
   ItemScanner(this.setMaps);
-
+  List<String> EPC_list = new List();
   Future<bool> scanTags() async{
     if(MyApp.bluetoothDevice !=  null && MyApp.bluetoothDevice.isConnected){
       if(!gattPlatform.checkMethodCallHandler(methodCallHandler)){
@@ -27,7 +27,6 @@ class ItemScanner{
   Future<void> methodCallHandler(MethodCall call){
     switch(call.method){
       case 'scanTagsRes':{
-        print("fetchItemsRes1 scanned: " + call.arguments.toString());
         scanTagsRes(call.arguments);
         break;
       }
@@ -39,11 +38,14 @@ class ItemScanner{
   }
 
   void scanTagsRes(List<dynamic> arguments){
-    // List<String> res = arguments;
-    print("Inside the 2 res");
-    print("fetchItemsRes2 scanned: " + arguments.first.toString());
-    epc2class(arguments).then((value) { setMaps(value);});
-
+    String epc = arguments.first.toString();
+    print("fetchItemsRes scanned: " + epc);
+    if(!EPC_list.contains(epc)) {
+      EPC_list.add(epc);
+      epc2class(arguments).then((value) {
+        setMaps(value);
+      });
+    }
   }
 
   Future<List<Map<String,dynamic>>> epc2class(List<dynamic> epc) async{

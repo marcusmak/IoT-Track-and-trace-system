@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:vb_v0/ControllerClass/ItemScanner.dart';
 
@@ -35,17 +37,19 @@ class _AddItemPageState extends State<AddItemPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameTextController = TextEditingController();
 
+  String _localImagePath;
+
   String _itemName;
-  String _imagePath;
+  File _imageFile;
   bool editMode = false;
-  String _image;
+  // String _image;
   final picker = ImagePicker();
 
   @override
   void initState(){
     super.initState();
     setState(() {
-      _image = widget.item.image != null? widget.item.image:null;
+      _imageFile = widget.item.image != null? new File(widget.item.image):null;
       if(widget.item.name != null){
         _itemName = widget.item.name;
         _nameTextController.text = widget.item.name;
@@ -53,15 +57,14 @@ class _AddItemPageState extends State<AddItemPage> {
         _itemName =  "Unnamed";
       };
     });
-
+    getApplicationDocumentsDirectory().then((value) => _localImagePath = join(value.path,'item-pics'));
   }
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     setState(() {
       if (pickedFile != null) {
-        _imagePath = pickedFile.path;
-        _image = base64Encode(File(pickedFile.path).readAsBytesSync());
+        _imageFile = File(pickedFile.path);
         print("set image file");
       } else {
         print('No image selected.');
@@ -74,6 +77,7 @@ class _AddItemPageState extends State<AddItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    // print(widget.item.image.toString());
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
@@ -87,9 +91,17 @@ class _AddItemPageState extends State<AddItemPage> {
                _itemName = _nameTextController.text;
                widget.item.name = _itemName;
              };
-             if(_imagePath != null){
-               widget.item.image = base64Encode(File(_imagePath).readAsBytesSync());
+             if(_imageFile != null){
+               print(_imageFile.path);
+               // widget.item.image = base64Encode(File(_imagePath).readAsBytesSync());
+               // Directory(_localImagePath +'/item-pics').createSync();
+               // print("here" + Directory(_localImagePath + '/itempics').path);
+               if(!Directory(_localImagePath).existsSync())
+                 Directory(_localImagePath).createSync(recursive: true);
+               widget.item.image = _imageFile.copySync(join(_localImagePath,widget.item.EPC+".jpg")).path;
+               print("copied to " + widget.item.image);
              }
+
 
 
             }
@@ -105,6 +117,7 @@ class _AddItemPageState extends State<AddItemPage> {
         title: Text("Item Details"),
         leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){
             Navigator.pop(context);
+            _imageFile.delete();
             widget.setItemCallBack(widget.item);
           },),
 
@@ -125,14 +138,14 @@ class _AddItemPageState extends State<AddItemPage> {
           child:Table(
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
           children: [
-          TableRow(
-          children: [
-          Text("Unique Serial:"),
-          Text(widget.item.EPC),
-          ]
-          ),
-          TableRow(
-          children: [
+            TableRow(
+              children: [
+                  Text("Unique Serial:"),
+                  Text(widget.item.EPC),
+              ]
+            ),
+            TableRow(
+            children: [
                   Text("Field:"),
                   Text(widget.item.classType),
                 ]
@@ -165,9 +178,10 @@ class _AddItemPageState extends State<AddItemPage> {
                       // _onImageButtonPressed(ImageSource.gallery, context: context);
                     },
                     icon: Icon(Icons.camera_alt_outlined),
-                  ):(_image == null && widget.item.image == null
+                  ):(widget.item.image == null
                       ? Text('No image')
-                      : Image.memory(base64Decode(_image)))
+                      : Image.file(File(widget.item.image))
+                  )
 
                   // Text(widget.item.name!= null?widget.item.name:"No image")
                 ]

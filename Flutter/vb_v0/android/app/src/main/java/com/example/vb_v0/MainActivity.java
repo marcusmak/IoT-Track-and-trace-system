@@ -1,27 +1,28 @@
 package com.example.vb_v0;
 
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.vb_v0.alarm.service.RunAfterBootService;
-import com.example.vb_v0.ble.service.BleConnector;
+import com.example.vb_v0.alarm.service.BootDeviceReceiver;
+import com.example.vb_v0.ble.service.BleScanner;
+import com.example.vb_v0.ble.service.GattServiceHandler;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 import io.flutter.Log;
 import io.flutter.embedding.android.FlutterActivity;
@@ -32,17 +33,19 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
-    private static final String CHANNEL = "com.example.vb_v0/ble_connector";
-    BleConnector mBleConnector;
+    public static boolean hasActivity;
+    private static final String CHANNEL_BLE = "com.example.vb_v0/ble_connector";
+    private static final String CHANNEL_GATT = "com.example.vb_v0/gatt_service";
+    BleScanner mBleConnector;
     boolean mBound = false;
     public static FlutterEngine mFlutterEngine;
-
+    private BroadcastReceiver mBootDeviceReceiver = new BootDeviceReceiver();
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className,IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            BleConnector.LocalBinder binder = (BleConnector.LocalBinder) service;
+            BleScanner.LocalBinder binder = (BleScanner.LocalBinder) service;
             mBleConnector = binder.getService();
             Log.d("BLE_Connection","service bound");
             mBound = true;
@@ -59,7 +62,7 @@ public class MainActivity extends FlutterActivity {
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
         mFlutterEngine = flutterEngine;
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL).setMethodCallHandler(
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL_BLE).setMethodCallHandler(
                 new MethodChannel.MethodCallHandler() {
                     @Override
                     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -82,31 +85,78 @@ public class MainActivity extends FlutterActivity {
                     }
                 }
         );
+
+        new MethodChannel(MainActivity.mFlutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL_GATT).setMethodCallHandler(
+                new MethodChannel.MethodCallHandler() {
+                    @Override
+                    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+                        switch (call.method){
+                            case "scanTags":
+//                                mGatt.setCharacteristicNotification()
+                                if(GattServiceHandler.getInstance()!= null)
+                                    GattServiceHandler.getInstance().scanTags(result);
+                            break;
+                            default:
+                                Log.e("Gatt_Service","Wrong method invoked");
+
+                        }
+                    }
+                }
+        );
     }
 
-//    @Override
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity","onStop");
+        if(connection != null && mBound){
+            unbindService(connection);
+            mBound = false;
+        }
+        hasActivity = false;
+    }
+
+    //    @Override
 //    protected void onCreate(@Nullable Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
+//
 //    }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("BLE_Connection","onStop");
-        unbindService(connection);
-        mBound = false;
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("BLE_Connection","onStart" + String.valueOf(bindService(new Intent(this, BleConnector.class),connection,Context.BIND_AUTO_CREATE)));
-//        bindService(new Intent(this, BleConnector.class),connection,Context.BIND_AUTO_CREATE);
+        hasActivity = true;
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_LONG).show();
+            Log.d("MainActivity","Sorry, you device does not support BLE.");
+        }else {
+            Log.d("MainActivity", "onStart: " + String.valueOf(bindService(new Intent(this, BleScanner.class), connection, Context.BIND_AUTO_CREATE)));
+            bindService(new Intent(this, BleScanner.class),connection,Context.BIND_AUTO_CREATE);
+        }
+
+        //alarm service
+//        Intent debugAlramTrigger = new Intent();
+//        debugAlramTrigger.setAction("DEBUG_ALARM_SERVICE");
+//        Log.d("BOOT_BROADCAST_RECEIVER",debugAlramTrigger.getAction());
+//        sendBroadcast(debugAlramTrigger);
+
     }
 
     private boolean bleScan() {
-        if(mBound){
+        if(mBound && !GattServiceHandler.isConnecting){
             Log.d("BLE_Connection","Starting ble service, connecting...");
             // Create intent to invoke the background service.
             // startService(new Intent(this, BleConnector.class));
@@ -163,7 +213,7 @@ public class MainActivity extends FlutterActivity {
                 @Override
                 public void run() {
                     // Call the desired channel message here.
-                    new MethodChannel(mFlutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL)
+                    new MethodChannel(mFlutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL_BLE)
                             .invokeMethod("scanResult",result);
                 }
             });

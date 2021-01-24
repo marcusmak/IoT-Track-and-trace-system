@@ -24,7 +24,7 @@ class ItemFetcher {
       LocalDataManager.BrosweData("Item");
       items = await LocalDataManager.fetchAllItems();
       print("items fetched:" );
-      print(items);
+      items.forEach((element) {print(element.toString());});
       callback();
       // items = <Item> [
       //   Item(

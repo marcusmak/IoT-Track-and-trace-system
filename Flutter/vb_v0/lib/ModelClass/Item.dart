@@ -34,7 +34,7 @@ class Item {
   Item({@required this.EPC, @required this.name, this.rItems, this.classID, this.className, this.classType, this.image /*this.rContexts,*/});
 
   Item.fromMap(Map<String,dynamic> itemMap){
-    Uint8List headedIntList;
+    // Uint8List headedIntList;
 
     this.EPC =  itemMap.containsKey('EPC')?itemMap['EPC']:null;
     this.classID = itemMap.containsKey('classID')?itemMap['classID']:null;
@@ -43,7 +43,7 @@ class Item {
     this.image = itemMap.containsKey('image')?itemMap['image']:null;
     // this.rItems = itemMap.containsKey('rItems')?itemMap['rItems']:null;
     this.name = itemMap.containsKey('name')?itemMap['name']:null;
-    this.in_bag = itemMap.containsKey('in_bag')?itemMap['in_bag'] != "0":null;
+    this.in_bag = itemMap.containsKey('in_bag')?itemMap['in_bag'] != "0":false;
     this.classType = itemMap.containsKey('classType')?itemMap['classType']:null;
 
   }
@@ -55,9 +55,9 @@ class Item {
       "name":this.name,
       // "classType": this.classType,
       // "className":this.className,
-      "image": this.image,
+      "image": this.image.toString(),
       "rItems":this.rItems.toString(),
-      "in_bag": this.in_bag?"1":"0",
+      "in_bag": this.in_bag?1:0,
     };
   }
 
@@ -67,17 +67,19 @@ class Item {
     if(this.name != null)
       return "[Instance of Item:{" +
          " EPC: "+ this.EPC +
-         " hasImage: "+ (this.image !=null) .toString() +
+         " hasImage: "+ ((this.image !=null)?this.image.length:"null").toString() +
          " hasrItems: " + (this.rItems != null).toString() +
          " classType: "+ this.classType +
          " name: " + this.name +
+         " in_bag: " + ((this.in_bag)?1:0).toString() + 
          "}]";
     else
       return "[Instance of Item:{" +
           " EPC: "+ this.EPC +
-          " hasImage: "+ (this.image !=null) .toString() +
+          " hasImage: "+ ((this.image !=null)?this.image.length:"null").toString() +
           " hasrItems: " + (this.rItems != null).toString() +
           " classType: "+ this.classType +
+          " name: null"
           "}]";
   }
 }

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/main.dart';
 
 import 'Global_var.dart';
@@ -95,6 +96,15 @@ class _SettingPageState extends State<SettingPage> {
                               // }
                             },
                             child: Text("Disconnect the bag")
+                          ),
+                          MaterialButton(
+                              color: Colors.white54,
+                              onPressed: (){
+                                LocalDataManager.DownloadDatabase();
+                                print("database downloaded");
+
+                              },
+                              child: Text("Download data")
                           ),
                           //Logout button
                           GestureDetector(

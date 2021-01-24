@@ -175,9 +175,9 @@ class ItemContainer extends StatelessWidget {
                               height:MediaQuery.of(context).size.height * 0.15 ,
                               width:MediaQuery.of(context).size.width * 0.5,
                               
-                              child: item.image!=null?Image.memory(base64Decode(item.image), fit: BoxFit.fill):Center(child:Text("No image")),
+                              child: item.image!='null' && item.image != null?Image.file(File(item.image) , fit: BoxFit.fill):Center(child:Text("No image")),
                             ),
-                            Text(item.name,
+                            Text(item.name!=null?item.name:item.className,
                                   
                                 style: TextStyle(
                                           color:Color.fromRGBO( 75, 75, 75, 1), 
