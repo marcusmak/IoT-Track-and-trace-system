@@ -81,9 +81,10 @@ class _GenderComponentState extends State with AutomaticKeepAliveClientMixin{
                             height: 150.0,
                             child: Card(
                               elevation: 6,
+                              color: Colors.grey,
                               shape: CircleBorder(),
                               child: Center(
-                                child:Text(index==0?"F":"M", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 30),)
+                                child:Text(index==0?"F":"M", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 30),)
                               ),
                             
                             )

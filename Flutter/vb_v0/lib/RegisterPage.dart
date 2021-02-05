@@ -109,9 +109,9 @@ class QuestionaireState extends State<Questionaire>{
   void initState() { 
     super.initState();
     questions = <Widget>[
-      // AccountRegComponent(userProfile: userProfile, controller: controller),
-      // GenderComponent(userProfile: userProfile, controller: controller),
-      // AgeComponent(userProfile: userProfile, controller: controller),
+      AccountRegComponent(userProfile: userProfile, controller: controller),
+      GenderComponent(userProfile: userProfile, controller: controller),
+      AgeComponent(userProfile: userProfile, controller: controller),
       // JobComponent(),
       MapComponent(userProfile: userProfile, controller: controller),
       // ConfirmationComponent(userProfile: userProfile, controller: controller),

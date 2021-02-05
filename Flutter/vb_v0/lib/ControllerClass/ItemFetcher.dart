@@ -28,48 +28,23 @@ class ItemFetcher {
       callback();
       // items = <Item> [
       //   Item(
-      //     iid: "00000",
+      //     EPC: "00000",
       //     name: "Iphone 13 pro",
+      //     classType: "Digital",
       //     image: "assets/images/iphone13.jpg"
       //   ),
       //   Item(
-      //     iid: "00001",
+      //     EPC: "00001",
       //     name: "Airpod 3.0",
-      //     image: "assets/images/airpod.jpg"        
+      //     classType: "Digital",
+      //     image: "assets/images/airpod.jpg"
       //   ),
-      //   Item(
-      //     iid: "00000",
-      //     name: "Iphone 13 pro",
-      //     image: "assets/images/iphone13.jpg"
-      //   ),
-      //   Item(
-      //     iid: "00001",
-      //     name: "Airpod 3.0",
-      //     image: "assets/images/airpod.jpg"        
-      //   ),
-      //           Item(
-      //     iid: "00000",
-      //     name: "Iphone 13 pro",
-      //     image: "assets/images/iphone13.jpg"
-      //   ),
-      //   Item(
-      //     iid: "00001",
-      //     name: "Airpod 3.0",
-      //     image: "assets/images/airpod.jpg"        
-      //   ),
-      //           Item(
-      //     iid: "00000",
-      //     name: "Iphone 13 pro",
-      //     image: "assets/images/iphone13.jpg"
-      //   ),
-      //   Item(
-      //     iid: "00001",
-      //     name: "Airpod 3.0",
-      //     image: "assets/images/airpod.jpg"        
-      //   )
-        
+      //
+      //
       // ];
+      // callback();
       // return;
     }
-    
+
+
 }

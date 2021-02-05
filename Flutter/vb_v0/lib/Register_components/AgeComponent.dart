@@ -158,12 +158,13 @@ class _AgeComponentState extends State<AgeComponent> with AutomaticKeepAliveClie
                                     //   color: Colors.white,
                                     //   shape: BoxShape.circle,
                                     // ),
+                                    color: Colors.grey,
                                     // width: 10,
                                     elevation: 6,
                                     shape: CircleBorder(),
                                     // color: Color.fromARGB((255/5*(i+1)).toInt(), 255, 255, 255),
                                     child: Center(
-                                      child:Text(i.toString(), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 35),)
+                                      child:Text(i.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 35),)
                                     ),
                                     
                                     )
