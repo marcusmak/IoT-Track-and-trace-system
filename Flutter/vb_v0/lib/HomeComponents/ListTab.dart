@@ -3,8 +3,10 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
+import 'package:path_provider/path_provider.dart';
 // import 'package:flutter_picker/flutter_picker.dart';
 
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
@@ -100,38 +102,48 @@ class _ItemListContainerState extends State<ItemListContainer>{
   
   @override
   Widget build(BuildContext context) {
-    return tableBuilder();
+      return tableBuilder();
   }
 
   Widget tableBuilder(){
     List<TableRow> rows = [];
     int i = 0;
+    
     if(ItemFetcher.items != null){
-      ItemFetcher.items.forEach((element) {
-        if(element.classType == widget.classType){
-          if(i%2 == 0){
-            // print(i);
-            rows.add(
-              TableRow(
-                children:[
-                  ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),
-                ]
-              )
-            );
-          }else{
-            // print(i);
-            rows.last.children.add(ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),);
-          }
-        }
-
-        ++i;
-      });
-
-
-      // to ensure that every row have same number of elements
-      if(rows.isNotEmpty && rows.last.children.length %2 != 0){
-        rows.last.children.add(Container());
+      try{
+        ItemFetcher.items.forEach((element) {
+          if(element.classType == widget.classType){
+            // print(element.classType + ":" + widget.classType);
+            if(i%2 == 0){
+              // print("ai:"+i.toString());
+              rows.add(
+                TableRow(
+                  children:[
+                    ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),
+                  ]
+                )
+              );
+            }else{
+              // print("bi:"+i.toString());
+              rows.last.children.add(ItemContainer(widget.setBPContent, widget.setBottomPrompt, item: element),);
+            }
+            ++i;
+          }          
+        });
+      }catch(e){
+        // print("error 1");
+        // print(e);
       }
+
+      try{
+      // to ensure that every row have same number of elements
+        if(rows.isNotEmpty && rows.last.children.length %2 != 0){
+          rows.last.children.add(Container());
+        }
+      }catch(e){
+        // print("error2");
+        // print(e);  
+      } 
 
     }
     if(rows.isNotEmpty) {
@@ -150,56 +162,72 @@ class ItemContainer extends StatelessWidget {
   
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-         horizontal:MediaQuery.of(context).size.width * 0.025 
-        ,vertical:MediaQuery.of(context).size.height * 0.05
-      ),
-      child: 
-        GestureDetector(
-          child:
-            Container(
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    // border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
-                    color: Colors.white70
+  Widget build(BuildContext context){
+    Widget displayImage;
+    if(item.image!='null' && item.image != null){
+      if(item.image.contains("item-pics")){
+        displayImage = Image.file(File(item.image) , fit: BoxFit.fill);
+      }else{
+        displayImage = Image.asset(item.image , fit: BoxFit.fill);
+      }
+    }else{
+      displayImage = Center(child:Text("No image"));
+    }
+    try{
+      Widget result = Container(
+        padding: EdgeInsets.symmetric(
+          horizontal:MediaQuery.of(context).size.width * 0.025 
+          ,vertical:MediaQuery.of(context).size.height * 0.05
+        ),
+        child: 
+          GestureDetector(
+            child:
+              Container(
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      // border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
+                      color: Colors.white70
 
-                  ),
-                child:Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
+                    ),
+                  child:Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
 
-                            SizedBox(
-                              height:MediaQuery.of(context).size.height * 0.15 ,
-                              width:MediaQuery.of(context).size.width * 0.5,
+                              SizedBox(
+                                height:MediaQuery.of(context).size.height * 0.15 ,
+                                width:MediaQuery.of(context).size.width * 0.5,
+                                
+                                child:displayImage,
+                                // child: item.image!='null' && item.image != null?Image.asset(item.image , fit: BoxFit.fill):Center(child:Text("No image")),
+                              ),
+                              Text(item.name!=null?item.name:item.className,
+                                    
+                                  style: TextStyle(
+                                            color:Color.fromRGBO( 75, 75, 75, 1), 
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w800
+                                  )
+                              )
                               
-                              child: item.image!='null' && item.image != null?Image.file(File(item.image) , fit: BoxFit.fill):Center(child:Text("No image")),
-                              // child: item.image!='null' && item.image != null?Image.asset(item.image , fit: BoxFit.fill):Center(child:Text("No image")),
-                            ),
-                            Text(item.name!=null?item.name:item.className,
-                                  
-                                style: TextStyle(
-                                          color:Color.fromRGBO( 75, 75, 75, 1), 
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w800
-                                )
-                            )
-                            
-                          ]
-                      ),
+                            ]
+                        ),
+                ),
+                height:MediaQuery.of(context).size.height * 0.3 ,
+                // width:MediaQuery.of(context).size.width * 0.01
               ),
-              height:MediaQuery.of(context).size.height * 0.3 ,
-              // width:MediaQuery.of(context).size.width * 0.01
-            ),
-            onTap: (){
-              this.setBPContent(ReminderView(item,this.setBottomPrompt));   
-              print(item.name);
-            },
-          )
-        );
-
+              onTap: (){
+                this.setBPContent(ReminderView(item,this.setBottomPrompt));   
+                print(item.name);
+              },
+            )
+          );
+          return result;
+    }catch(e){
+      print(e);
+    }
+    return null;
+    
   }
 }
 
@@ -413,7 +441,7 @@ class _ReminderViewState extends State<ReminderView> {
                             buttonTextColor: Theme.of(context).colorScheme.primary,
                             context: context,
                             title: "Repeat",
-                            items: ["Never","Every day","Every week","Every weekdays","Every month", "Every year","Custom"],
+                            items: ["Never","Every day","Every week","Every weekdays","Every month", "Every year"],//,"Custom"],
                             onChanged: (value){
                               if(value == "Custom"){
                                 showMaterialCheckboxPicker(
@@ -527,13 +555,17 @@ class _ReminderViewState extends State<ReminderView> {
             // List<Location> leavingLocations = List();
             // List<Location> headingLocations = List();
             int start_time = targetDate!=null?targetDate.millisecondsSinceEpoch:null;
-            if(selectedTime != null){
-              start_time += selectedTime.hour * 3600 * 1000;
-              start_time += selectedTime.minute * 60 * 1000;
+            if(start_time != null  && selectedTime != null){
+              start_time =  (start_time / 1000).floor();
+              start_time += selectedTime.hour * 3600;
+              start_time += selectedTime.minute * 60;
             };
             await LocalDataManager.AddCustomRule(
               ItemContext(
-                start_time: start_time,
+                start_timestamp: start_time,
+                start_date: targetDate.year.toString() + "-" + padZero(targetDate.month) + "-" + padZero(targetDate.day),
+                start_time: padZero(selectedTime.hour) + ":" + padZero(selectedTime.minute),
+                start_weekday: targetDate.weekday,
                 frequency: repeat,
                 from_loc: leavingLocations.isNotEmpty?leavingLocations.toString():null,
                 to_loc: headingLocations.isNotEmpty?headingLocations.toString():null
@@ -563,6 +595,12 @@ class _ReminderViewState extends State<ReminderView> {
     // );
   }
 
+  String padZero(int n){
+    if(n < 10){
+      return "0" + n.toString();
+    }
+    return n.toString();
+  }
 
   @override
   Widget build(BuildContext context) {

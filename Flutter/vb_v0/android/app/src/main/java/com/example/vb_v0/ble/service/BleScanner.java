@@ -45,7 +45,7 @@ public class BleScanner extends Service {
     private ScanSettings settings;
     private List<ScanFilter> filters;
 //    private BluetoothGatt mGatt;
-    private GattServiceHandler mGattServiceHandler;
+//    private GattServiceHandler mGattServiceHandler;
     private final IBinder binder = new LocalBinder();
     private ArrayList<BluetoothDevice> ble_devices;
     private void addDevice(BluetoothDevice device){
@@ -133,11 +133,11 @@ public class BleScanner extends Service {
     @Override
     public void onDestroy() {
         Log.i("BLE_Connection","onDestory");
-        if (mGattServiceHandler == null) {
+        if (GattServiceHandler.getInstance() == null) {
             return;
         }
-        mGattServiceHandler.close();
-        mGattServiceHandler = null;
+        GattServiceHandler.getInstance().close();
+        GattServiceHandler.instance = null;
         super.onDestroy();
     }
 
@@ -262,25 +262,37 @@ public class BleScanner extends Service {
     }
 
     public GattServiceHandler connectToDevice(BluetoothDevice device) {
-        mGattServiceHandler = GattServiceHandler.getInstance(this,device);
-        if(mGattServiceHandler.connect()){
-            if(mScanning)
-                scanLeDevice(false);
-            serialiseBLE(device.getAddress());
-            return mGattServiceHandler;
-        };
+        if(GattServiceHandler.getInstance() != null){
+            GattServiceHandler mGattServiceHandler = GattServiceHandler.getInstance(this,device);
+            if(mGattServiceHandler.connect()){
+                if(mScanning)
+                    scanLeDevice(false);
+    //            serialiseBLE(device.getAddress());
+                return mGattServiceHandler;
+            };
+        }else{
+            if(GattServiceHandler.isConnecting) {
+                if (GattServiceHandler.getInstance().getConnectedDeviceAddress().compareTo(device.getAddress()) == 0) {
+                    return GattServiceHandler.getInstance();
+                } else {
+                    GattServiceHandler.getInstance().disconnect();
+                    return GattServiceHandler.getInstance(this, device);
+                }
+            }
+        }
         return null;
     }
 
-    public void serialiseBLE(String address){
-        SharedPreferences lastBLEPre = getSharedPreferences(getString(R.string.package_name),Context.MODE_PRIVATE);
-        SharedPreferences.Editor bleEdit = lastBLEPre.edit();
-        bleEdit.putString(getString(R.string.last_ble_connection),address);
-        bleEdit.apply();
-    }
+//    public void serialiseBLE(String address){
+////        SharedPreferences lastBLEPre = getSharedPreferences(getString(R.string.package_name),Context.MODE_PRIVATE);
+////        SharedPreferences.Editor bleEdit = lastBLEPre.edit();
+////        bleEdit.putString(getString(R.string.last_ble_connection),address);
+////        bleEdit.apply();
+//    }
 
 
     public boolean disconnectToDevice(String address){
+        GattServiceHandler mGattServiceHandler = GattServiceHandler.getInstance();
         String connectedAddress = mGattServiceHandler.getConnectedDeviceAddress();
         if(connectedAddress == null || !connectedAddress.equals(address)){
             return false;

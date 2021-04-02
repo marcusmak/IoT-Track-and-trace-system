@@ -11,7 +11,9 @@ class ItemScanner{
   void Function(List<Map<String,dynamic>>) setMaps;
   ItemScanner(this.setMaps);
   List<String> EPC_list = new List();
+
   Future<bool> scanTags() async{
+    print("item scnner");
     if(MyApp.bluetoothDevice !=  null && MyApp.bluetoothDevice.isConnected){
       if(!gattPlatform.checkMethodCallHandler(methodCallHandler)){
         print("Setting gatt method handler");
@@ -20,6 +22,7 @@ class ItemScanner{
       await gattPlatform.invokeMethod("scanTags");
       return true;
     }else{
+      print("not connected in scanTags");
       return false;
     }
   }
@@ -42,6 +45,7 @@ class ItemScanner{
     print("fetchItemsRes scanned: " + epc);
     if(!EPC_list.contains(epc)) {
       EPC_list.add(epc);
+      print("added to EPC List");
       epc2class(arguments).then((value) {
         setMaps(value);
       });
@@ -52,11 +56,20 @@ class ItemScanner{
     // print("EPC to string" + epc.toString());
     String res = await PostHandler("/epc2class",<String,List<dynamic>>{"EPC":epc});
     // print("EPC2item request to server: "+ res);
-    List temp = jsonDecode(res);
-    List<Map<String,dynamic>> maps = temp.map((e) => e as Map<String,dynamic>).toList();
+    print("response : " + res.toString());
+    if(res != null){
+      List temp = jsonDecode(res);
+      List<Map<String,dynamic>> maps = temp.map((e) => e as Map<String,dynamic>).toList();
 
-    print("converted to " + maps.first['className']);
-    return maps;
+      print("converted to " + maps.first['className']);
+      return maps;
+    }else{
+      List<Map<String,dynamic>> maps;
+      epc.forEach((element) {
+        maps.add({'EPC':element as String,'classType':"Other"});
+      });
+      return maps;
+    }
   }
 
 }

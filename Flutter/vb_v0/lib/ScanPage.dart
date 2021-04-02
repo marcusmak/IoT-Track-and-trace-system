@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
 import 'package:vb_v0/ControllerClass/ItemFetcher.dart';
 import 'package:vb_v0/ControllerClass/ItemScanner.dart';
@@ -49,16 +50,29 @@ class _ScanPageState extends State<ScanPage> {
     });
     scannedItems = List();
     scanItem();
-    Future.delayed((Duration(milliseconds: 100)),(){
+    Future.delayed((Duration(milliseconds: 100)),() async {
       // ItemFetcher.initItems();
-      showDialog(context: context, builder:(context)=>
-        new BleDevicesDialog(context)
-      );
+    
+      print("ScanPage:initState");
+      if(MyApp.bluetoothDevice != null && MyApp.bluetoothDevice.isConnected){
+        print("ble already connected");
+      }else{
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String mAddress = prefs.getString("mAddress");
+        String mName = prefs.getString("mName");
+        MyApp.bluetoothDevice = BluetoothDevice(mName, mAddress);
+          if(!await MyApp.bluetoothDevice.connect()){
+            showDialog(context: context, builder:(context)=>
+              new BleDevicesDialog(context)
+          );
+          print("show dialog");
+        }
+      }
     });
     Timer(scanTimeout,handleTimeout);
     // setState((){
-    //   scannedItems.add(Item(EPC:"1234",name:"fake item",classID:"d00001",className:"Fake Class", classType: "Digital"));
-    //   scannedItems.add(Item(EPC:"1224",name:"fake item2",classID:"d00001",className:"Fake Class", classType: "Digital"));
+    //   scannedItems.add(Item(EPC:"1234",name:"Iphone 13 pro",classID:"d00001",className:"Fake Class", classType: "Digital", image: "assets/images/iphone13.jpg"));
+    //   scannedItems.add(Item(EPC:"1224",name:"Airpod 3.0",classID:"d00001",className:"Fake Class", classType: "Digital" , image: "assets/images/airpod.jpg"));
     // });
   }
 
@@ -83,7 +97,8 @@ class _ScanPageState extends State<ScanPage> {
   Widget scanningTextWidget(){
     return Center(
               child:
-                Row(
+                isTimeout?Text("No Result",style: ts,)
+                :Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                   Text("Scanning",style:ts),
@@ -120,11 +135,20 @@ class _ScanPageState extends State<ScanPage> {
         Text(temp.name!=null?temp.name:temp.className,),
 
       ];
-      if (temp.image!=null)
-        _itemDetails.add(Container(child:Image.file(File(temp.image), fit: BoxFit.scaleDown,)));
+      if (temp.image!=null) {
+            _itemDetails.add(Container(
+                child: Image.file(
+              File(temp.image),
+              fit: BoxFit.scaleDown,
+            )));
+            // _itemDetails.add(Container(
+            //     child: Image.asset(
+            //   temp.image,
+            //   fit: BoxFit.scaleDown,
+            // )));
+          }
 
-
-        return Padding(
+          return Padding(
           padding: EdgeInsets.symmetric(
             vertical:   MediaQuery.of(context).size.height*0.01,
             horizontal: MediaQuery.of(context).size.width*0.025,
@@ -179,14 +203,15 @@ class _ScanPageState extends State<ScanPage> {
         backgroundColor: Colors.white60,
         onPressed: ()async{
           // print("transit to main page");
-          await LocalDataManager.putAllItems(scannedItems);
+          if(!scannedItems.isEmpty)
+            await LocalDataManager.putAllItems(scannedItems);
           Navigator.pushReplacementNamed(context, "/home");
           setState(() {
             isTimeout = true;
           });
         },
         child: Icon(Icons.navigate_next, color: Colors.white,size: 50,),
-        
+
       )
       
     );

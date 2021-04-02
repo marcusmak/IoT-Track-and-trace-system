@@ -141,7 +141,9 @@ public class WeatherInfoManager {
                     weatherLocation = response.getJSONObject("location");
                     JSONObject current = response.getJSONObject("current");
                     currentWeather = new WeatherInfo(current);
-                    alerts = response.getJSONObject("alerts").getJSONArray("alert");
+                    if(response.has("alerts")) {
+                        alerts = response.getJSONObject("alerts").getJSONArray("alert");
+                    }
                     days = numDays;
                     //  forecast = new HashMap<>();
                     JSONArray temp = response.getJSONObject("forecast").getJSONArray("forecastday");

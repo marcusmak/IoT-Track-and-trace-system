@@ -51,10 +51,11 @@ class LocalDataManager{
     // );
   }
 
-  static void DeleteDatabase() async{
+  static Future<void> DeleteDatabase() async{
     WidgetsFlutterBinding.ensureInitialized();
-    print("Delete databse");
+    print("Delete database");
     await deleteDatabase(join(await getDatabasesPath(), 'localDB.db'));
+    print("Finish deleteing database");
   }
 
   static Future AddCustomRule(ItemContext context, Item item) async{
@@ -79,10 +80,19 @@ class LocalDataManager{
     // if(!database.isOpen || database == null){
     database = await openDatabase(dbPath);
     // }
-    String sql = "SELECT EPC, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN custom_class ON Item.classID = custom_class.classID";
-    List<Map<String,dynamic>> res = await database.rawQuery(sql);
+    try {
+      String sql = "SELECT EPC, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN custom_class ON Item.classID = custom_class.classID";
+      List<Map<String,dynamic>> res = await database.rawQuery(sql);
+      database.close();
+      return res.map((element)=>new Item.fromMap(element)).toList();
+    }catch(e){
+      print("error in line 86 localdatamanager.dart");
+      print(e);
+    }
+    
     database.close();
-    return res.map((element)=>new Item.fromMap(element)).toList();
+    return null;
+    
   }
 
   static Future<bool> putAllItems(List<Item> items) async{
@@ -95,7 +105,7 @@ class LocalDataManager{
         print(item.toMap().toString());
         await database.insert("Item", item.toMap());
       }catch(e){
-        print("Error on putting in databse");
+        print("Error on putting in database");
         print(e);
       }
     }
@@ -115,10 +125,13 @@ class LocalDataManager{
 
 
   static void BrosweData(String table) async{
-    var dbPath = join(await getDatabasesPath(), 'localDB.db');
-    
-    database = await openDatabase(dbPath);
-    print("Broswing Table " + table.toString() + (await database.query(table)).toString());
-    database.close();
+    try{
+      var dbPath = join(await getDatabasesPath(), 'localDB.db');
+      database = await openDatabase(dbPath);
+      print("Broswing Table " + table.toString() + (await database.query(table)).toString());
+      database.close();
+    }catch(e){
+      print(e);
+    }
   }
 }

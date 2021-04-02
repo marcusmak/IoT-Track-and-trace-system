@@ -37,9 +37,7 @@ import 'dart:isolate';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // AndroidAlarmManager.initialize();
-  LocalDataManager.DeleteDatabase();
-  
-
+  await LocalDataManager.DeleteDatabase();
   LocalDataManager.InitialiseDatabase();
   
   runApp(MyApp());
@@ -94,7 +92,6 @@ class MyApp extends StatelessWidget {
         // '/add_item' :(BuildContext context) => AddItemPage(),
       },
       onGenerateRoute: _getRoute,
-      // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 

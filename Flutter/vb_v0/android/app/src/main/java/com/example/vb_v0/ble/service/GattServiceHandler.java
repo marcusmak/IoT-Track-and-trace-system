@@ -45,7 +45,7 @@ public class GattServiceHandler{
         return instance;
     }
 
-    GattServiceHandler(Context context,BluetoothDevice device){
+    private GattServiceHandler(Context context,BluetoothDevice device){
         mBluetoothDevice = device;
         androidContext = context;
 
@@ -81,6 +81,10 @@ public class GattServiceHandler{
     }
 
     public boolean connect(){
+        if(isConnecting){
+
+        }
+
         if (mGatt == null && mBluetoothDevice != null) {
             mGatt = mBluetoothDevice.connectGatt(androidContext, true, gattCallback);
             return true;
@@ -149,9 +153,9 @@ public class GattServiceHandler{
                     if(BootDeviceReceiver.isRepeating){
 
                         Intent broadcastIntent = new Intent(androidContext, BagActivityManager.class);
-//        Bundle bleDevice = new Bundle();
-//        bleDevice.putString("bleName",device.getName());
-//        bleDevice.putString("bleAddress",device.getAddress());
+                        //        Bundle bleDevice = new Bundle();
+                        //        bleDevice.putString("bleName",device.getName());
+                        //        bleDevice.putString("bleAddress",device.getAddress());
                         broadcastIntent.putStringArrayListExtra("in_bag",result);
                         androidContext.sendBroadcast(broadcastIntent);
                     }

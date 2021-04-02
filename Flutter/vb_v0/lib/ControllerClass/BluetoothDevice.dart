@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:vb_v0/Global_var.dart';
 import 'package:vb_v0/main.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BluetoothDevice{
   String mName;
@@ -14,9 +15,13 @@ class BluetoothDevice{
     try {
       if(await blePlatform.invokeMethod("bleConnect",{"mName":this.mName,"mAddress":this.mAddress})){
           isConnected = true;
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString("lastBLE", mAddress);    
+          await prefs.setString("lastBLEName", mName);
           return true;
       };
     } on PlatformException catch (e) {
+      isConnected = false;
       print("Failed to Invoke: '${e.message}'.");
     }
 
@@ -64,7 +69,6 @@ class BluetoothDevice{
 class BleDevicesDialog extends StatefulWidget {
   BuildContext context;
   BleDevicesDialog(this.context,{Key key}) : super(key: key);
-
   @override
   _BleDevicesDialogState createState() => _BleDevicesDialogState();
 }
@@ -86,8 +90,9 @@ class _BleDevicesDialogState extends State<BleDevicesDialog> {
             MyApp.bluetoothDevice = BluetoothDevice(element['mName'],element['mAddress']);
             if(!(await MyApp.bluetoothDevice.connect()))
               MyApp.bluetoothDevice = null;
-            else
+            else{
               Navigator.pop(widget.context);
+            }
           },
         )
       );
@@ -121,6 +126,7 @@ class _BleDevicesDialogState extends State<BleDevicesDialog> {
   }
 
   void handleBleScanCallback(Map bleDescriptor){
+      print("handleBleScanCallback invoked");
       if(!devices.contains(bleDescriptor))
         setState(() {
           devices.add(bleDescriptor);

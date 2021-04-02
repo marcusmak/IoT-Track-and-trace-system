@@ -7,10 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.vb_v0.R;
+import com.example.vb_v0.alarm.service.util.BagActivityManager;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class BootDeviceReceiver extends BroadcastReceiver {
@@ -20,8 +26,10 @@ public class BootDeviceReceiver extends BroadcastReceiver {
     private PendingIntent pendingIntent;
     private Context context;
     public static boolean isRepeating = false;
+    private static long intervalTime = 5 * 1000;
     @Override
     public void onReceive(Context context, Intent intent) {
+
         this.context = context;
         String action = intent.getAction();
 
@@ -30,7 +38,8 @@ public class BootDeviceReceiver extends BroadcastReceiver {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
         Log.d(TAG_BOOT_BROADCAST_RECEIVER, message);
-
+        Log.d(TAG_BOOT_BROADCAST_RECEIVER,"Running on UI thread: " + (Looper.myLooper() == Looper.getMainLooper()));
+        //turn on always detecting
         if(Intent.ACTION_BOOT_COMPLETED.equals(action) || action.equalsIgnoreCase("DEBUG_ALARM_SERVICE"))
         {
             SharedPreferences alarmServicePre = context.getSharedPreferences(context.getString(R.string.package_name),Context.MODE_PRIVATE);
@@ -42,6 +51,7 @@ public class BootDeviceReceiver extends BroadcastReceiver {
 
             if(alarmServicePre.getBoolean("onBootTrigger", true)) {
                 startServiceByAlarm(context);
+//                debugServiceDirectly(context);
             }
 
         }else if(action.equalsIgnoreCase("ACTION_CANCEL_ALARM")){
@@ -50,28 +60,29 @@ public class BootDeviceReceiver extends BroadcastReceiver {
     }
 
     /* Start RunAfterBootService service directly and invoke the service every 10 seconds. */
-    private void startServiceDirectly(Context context)
-    {
-        try {
-            while (true) {
-                String message = "BootDeviceReceiver onReceive start service directly.";
+//    private void startServiceDirectly(Context context)
+//    {
+//        try {
+//            while (true) {
+//                String message = "BootDeviceReceiver onReceive start service directly.";
+//
+//                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+//
+//                Log.d(TAG_BOOT_BROADCAST_RECEIVER, message);
+//
+//                // This intent is used to start background service. The same service will be invoked for each invoke in the loop.
+//                Intent startServiceIntent = new Intent(context, RunAfterBootService.class);
+//                context.startService(startServiceIntent);
+//
+//                // Current thread will sleep one second.
+//                Thread.sleep(10000);
+//            }
+//        }catch(InterruptedException ex)
+//        {
+//            Log.e(TAG_BOOT_BROADCAST_RECEIVER, ex.getMessage(), ex);
+//        }
+//    }
 
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-
-                Log.d(TAG_BOOT_BROADCAST_RECEIVER, message);
-
-                // This intent is used to start background service. The same service will be invoked for each invoke in the loop.
-                Intent startServiceIntent = new Intent(context, RunAfterBootService.class);
-                context.startService(startServiceIntent);
-
-                // Current thread will sleep one second.
-                Thread.sleep(10000);
-            }
-        }catch(InterruptedException ex)
-        {
-            Log.e(TAG_BOOT_BROADCAST_RECEIVER, ex.getMessage(), ex);
-        }
-    }
 
     /* Create an repeat Alarm that will invoke the background service for each execution time.
      * The interval time can be specified by your self.  */
@@ -85,7 +96,7 @@ public class BootDeviceReceiver extends BroadcastReceiver {
         pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long startTime = System.currentTimeMillis();
-        long intervalTime =5*1000;
+//        long intervalTime = 60 * 1000;
 
         String message = "Start service use repeat alarm. ";
 
@@ -112,6 +123,30 @@ public class BootDeviceReceiver extends BroadcastReceiver {
         }
     }
 
+
+    private void debugServiceDirectly(Context context)
+    {
+        Log.d("BOOT_BAGACTIVITY_DEBUG", "debugging");
+
+        try {
+            Thread.sleep(10000);
+            Intent broadcastIntent = new Intent(context, BagActivityManager.class);
+            ArrayList<String> result = new ArrayList<>();
+            result.add("fakeEPC1");
+            result.add("fakeEPC2");
+            broadcastIntent.putStringArrayListExtra("in_bag",result);
+            context.sendBroadcast(broadcastIntent);
+            Thread.sleep(10000);
+            result.clear();
+            result.add("fakeEPC1");
+            broadcastIntent.putStringArrayListExtra("in_bag",result);
+            context.sendBroadcast(broadcastIntent);
+
+        }catch(InterruptedException ex)
+        {
+            Log.e(TAG_BOOT_BROADCAST_RECEIVER, ex.getMessage(), ex);
+        }
+    }
 
 
 }

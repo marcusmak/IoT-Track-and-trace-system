@@ -4,5 +4,8 @@
     <string name="bluetooth_disabled">Please turn on Bluetooth</string>
     <string name="package_name">com.example.vb_v0</string>
     <string name="last_ble_connection">lastBLE</string>
+    <string name="channel_name">test_channel_name</string>
+    <string name="channel_description">test_channel_description</string>
+    <string name="flutterSharedPref">FlutterSharedPreferences</string>
 
 </resources>

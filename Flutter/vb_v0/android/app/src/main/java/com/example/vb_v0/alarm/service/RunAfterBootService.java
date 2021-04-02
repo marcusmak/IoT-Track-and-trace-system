@@ -19,6 +19,9 @@ import com.example.vb_v0.alarm.service.util.PackingContextManager;
 import com.example.vb_v0.alarm.service.util.RuleChecker;
 import com.example.vb_v0.ble.service.GattServiceHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.flutter.Log;
 
 
@@ -37,9 +40,10 @@ public class RunAfterBootService extends Service {
 
     private PackingContextManager contextManager;
     private RuleChecker ruleChecker;
-    private GattServiceHandler gattServiceHandler;
+//    private GattServiceHandler gattServiceHandler;
     public static boolean isRunning;
 
+    LocalNotificationManager localNotificationManager;
 
     public RunAfterBootService() {
     }
@@ -57,53 +61,64 @@ public class RunAfterBootService extends Service {
         Context context = getApplicationContext();
         contextManager  = new PackingContextManager(context);
         ruleChecker     = new RuleChecker(context);
+        localNotificationManager = new LocalNotificationManager(context,"0");
         Log.d(TAG_BOOT_EXECUTE_SERVICE, "RunAfterBootService onCreate() method.");
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        String message = "RunAfterBootService onStartCommand() method.";
+        try {
+            String message = "RunAfterBootService onStartCommand() method.";
 //        Log.d(TAG_BOOT_EXECUTE_SERVICE, "RunAfterBootService onStartCommand() method.");
-        //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
-        if(!GattServiceHandler.isConnecting ){ //&& !MainActivity.hasActivity){
-            if(connectLastBLE()){
-                Log.d(TAG_BOOT_EXECUTE_SERVICE,"connected to ble");
-            }else{
-                Log.d(TAG_BOOT_EXECUTE_SERVICE,"fail to connect");
-            };
-        }
 
-        if(GattServiceHandler.isConnecting ){
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //ALERT: un comment after esp32 online
+//        if(!GattServiceHandler.isConnecting){ //&& !MainActivity.hasActivity){
+//            if(connectLastBLE()){
+//                Log.d(TAG_BOOT_EXECUTE_SERVICE,"connected to ble");
+//            }else{
+//                Log.d(TAG_BOOT_EXECUTE_SERVICE,"fail to connect");
+//            };
+//        }
+
+//        if(GattServiceHandler.isConnecting){
             //get current ble list
-            gattServiceHandler.scanTags();
+//            GattServiceHandler.getInstance().scanTags();
             //get current context
             PackingContextManager.PackingContext currentPC = contextManager.getCurrentPC();
 
-            //check system rule
-            //check custom rule
-            ruleChecker.checkRule(currentPC);
-            //check internet recommendations
+            //check system rule && check custom rule // && check internet recommendations
+            List<String> reminderString = new ArrayList<>(ruleChecker.checkRule(currentPC));
+            if (!reminderString.isEmpty()) {
+                localNotificationManager.showNotification(reminderString, true);
+
+            }
+            ;
+
+//        }
+
+
+        }catch (Exception e){
+
         }
-
-
-
-
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     private boolean connectLastBLE(){
         Log.d(TAG_BOOT_EXECUTE_SERVICE, "connecting ble in background");
-        SharedPreferences lastBLEPre = getSharedPreferences(getString(R.string.package_name),Context.MODE_PRIVATE);
-        if(!lastBLEPre.contains(getString(R.string.last_ble_connection))){
+//        SharedPreferences lastBLEPre = getSharedPreferences(getString(R.string.package_name),Context.MODE_PRIVATE);
+        SharedPreferences lastBLEPref = getSharedPreferences(getString(R.string.flutterSharedPref),Context.MODE_PRIVATE);
+        if(!lastBLEPref.contains("flutter." + getString(R.string.last_ble_connection))){
             Intent cancelIntent = (new Intent()).setAction("ACTION_CANCEL_ALARM");
             sendBroadcast(cancelIntent);
             return false;
         }else{
-            String address = lastBLEPre.getString(getString(R.string.last_ble_connection),null);
+            String address = lastBLEPref.getString("flutter." +getString(R.string.last_ble_connection),null);
             BluetoothDevice bluetoothDevice;
             if(address != null) {
                 if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -115,8 +130,8 @@ public class RunAfterBootService extends Service {
                 BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
                 bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
                 if(bluetoothDevice != null) {
-                    gattServiceHandler = GattServiceHandler.getInstance(getApplicationContext(), bluetoothDevice);
-                    return gattServiceHandler.connect();
+                    return GattServiceHandler.getInstance(getApplicationContext(), bluetoothDevice).connect();
+
                 }
             }else{
                 Log.d(TAG_BOOT_EXECUTE_SERVICE,"cant find last ble connection address");
