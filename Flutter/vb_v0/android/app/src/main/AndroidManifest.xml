@@ -11,6 +11,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="vb_v0"
         android:icon="@mipmap/ic_launcher">
+            <meta-data android:name="com.google.android.geo.API_KEY"
+                       android:value="AIzaSyAErVHs6hSqqTy8WJVb0EpetjRRxXscvhg"/>
             <service
                 android:name=".alarm.service.RunAfterBootService"
                 android:enabled="true"

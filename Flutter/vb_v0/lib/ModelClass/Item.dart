@@ -61,6 +61,15 @@ class Item {
     };
   }
 
+  Map<String,String> classInfo(){
+    return {
+      "classID": this.classID,
+      "classType": this.classType,
+      "className":this.className,
+      "definedBy": this.classID[0] == "s"?"system":"custom"
+    };
+  }
+
   @override
   String toString() {
     // TODO: implement toString
@@ -69,7 +78,7 @@ class Item {
          " EPC: "+ this.EPC +
          " hasImage: "+ ((this.image !=null)?this.image.length:"null").toString() +
          " hasrItems: " + (this.rItems != null).toString() +
-         " classType: "+ this.classType +
+         " classType: " + this.classType.toString() +
          " name: " + this.name +
          " in_bag: " + ((this.in_bag)?1:0).toString() + 
          "}]";

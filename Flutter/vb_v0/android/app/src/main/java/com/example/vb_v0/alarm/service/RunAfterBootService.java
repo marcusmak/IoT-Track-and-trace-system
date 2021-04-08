@@ -77,17 +77,17 @@ public class RunAfterBootService extends Service {
 
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //ALERT: un comment after esp32 online
-//        if(!GattServiceHandler.isConnecting){ //&& !MainActivity.hasActivity){
-//            if(connectLastBLE()){
-//                Log.d(TAG_BOOT_EXECUTE_SERVICE,"connected to ble");
-//            }else{
-//                Log.d(TAG_BOOT_EXECUTE_SERVICE,"fail to connect");
-//            };
-//        }
+        if(!GattServiceHandler.isConnecting){ //&& !MainActivity.hasActivity){
+            if(connectLastBLE()){
+                Log.d(TAG_BOOT_EXECUTE_SERVICE,"connected to ble");
+            }else{
+                Log.d(TAG_BOOT_EXECUTE_SERVICE,"fail to connect");
+            };
+        }
 
-//        if(GattServiceHandler.isConnecting){
+        if(GattServiceHandler.isConnecting){
             //get current ble list
-//            GattServiceHandler.getInstance().scanTags();
+            GattServiceHandler.getInstance().scanTags();
             //get current context
             PackingContextManager.PackingContext currentPC = contextManager.getCurrentPC();
 
@@ -99,7 +99,7 @@ public class RunAfterBootService extends Service {
             }
             ;
 
-//        }
+        }
 
 
         }catch (Exception e){

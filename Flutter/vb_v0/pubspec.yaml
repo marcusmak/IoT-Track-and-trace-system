@@ -31,7 +31,9 @@ dependencies:
   flutter_svg: ^0.17.0
   adobe_xd: ^0.1.4
   simple_map: ^0.1.0
-  platform_maps_flutter: ^0.1.9+4
+#  platform_maps_flutter: ^0.1.9+4
+#  google_maps_flutter: 0.4.0
+#  flutter_webview_plugin: ^0.3.11
   animated_text_kit: ^2.5.4
   http: ^0.12.2
   date_time_picker: "^1.1.0"
@@ -39,6 +41,9 @@ dependencies:
   flutter_picker: ^1.1.5
   image_picker: ^0.6.7+17
   shared_preferences: ^2.0.5
+  flutter_map : ^0.12.0
+  latlong: any
+  flutter_map_marker_popup: ^0.2.1
   # flutter_local_notifications: ^1.4.4+1
   #  bitmap: ^0.0.6
   # flutter_blue: ^0.7.3

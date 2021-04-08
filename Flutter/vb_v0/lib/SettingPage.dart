@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vb_v0/ControllerClass/BluetoothDevice.dart';
 import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
 import 'package:vb_v0/main.dart';
@@ -89,8 +90,15 @@ class _SettingPageState extends State<SettingPage> {
                             onPressed: () async{
                               // try {
                               //   if(await  blePlatform.invokeMethod('bleDisconnect',{"mAddress":MyApp.bluetoothDevice.mAddress})){
-                              MyApp.bluetoothDevice.disconnect().then((value) => value?MyApp.bluetoothDevice = null:null);
-                              //   }
+                              if(MyApp.bluetoothDevice != null)
+                                MyApp.bluetoothDevice.disconnect().then((value) => value?MyApp.bluetoothDevice = null:null);
+                              else {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.remove("lastBLE");
+                                prefs.remove("lastBLEName");
+                              }
+                        //   }
                               // } on PlatformException catch (e) {
                               //   print("Failed to Invoke: '${e.message}'.");
                               // }

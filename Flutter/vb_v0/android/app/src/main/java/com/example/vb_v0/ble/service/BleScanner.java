@@ -247,38 +247,51 @@ public class BleScanner extends Service {
 
     //not yet used
     private BluetoothDevice addressToDevice(String address){
-        return mBluetoothAdapter.getRemoteDevice(address);
+        if(address != null)
+            return mBluetoothAdapter.getRemoteDevice(address);
 //        for(int i = 0; i < ble_devices.size(); ++i)
 //            if(ble_devices.get(i).getAddress().equals(address))
 //                return ble_devices.get(i);
-//        return null;
+        return null;
     }
 
     public GattServiceHandler connectToDevice(String address) {
+
         BluetoothDevice temp = addressToDevice(address);
+
+
         if(temp == null)
             return null;
-        return connectToDevice(temp);
+        try {
+            return connectToDevice(temp);
+        }catch(Exception e ){
+            Log.e("BLE_Connection", e.toString());
+            return null;
+        }
     }
 
     public GattServiceHandler connectToDevice(BluetoothDevice device) {
-        if(GattServiceHandler.getInstance() != null){
+        scanLeDevice(false);
+        if(!GattServiceHandler.isConnecting){
+            Log.i("BLE_Connection","GattSErviceHanlder define");
+
             GattServiceHandler mGattServiceHandler = GattServiceHandler.getInstance(this,device);
             if(mGattServiceHandler.connect()){
+                Log.i("BLE_Connection","GattSErviceHanlder connect");
                 if(mScanning)
                     scanLeDevice(false);
     //            serialiseBLE(device.getAddress());
                 return mGattServiceHandler;
             };
         }else{
-            if(GattServiceHandler.isConnecting) {
-                if (GattServiceHandler.getInstance().getConnectedDeviceAddress().compareTo(device.getAddress()) == 0) {
-                    return GattServiceHandler.getInstance();
-                } else {
-                    GattServiceHandler.getInstance().disconnect();
-                    return GattServiceHandler.getInstance(this, device);
-                }
+
+            if (GattServiceHandler.getInstance().getConnectedDeviceAddress().compareTo(device.getAddress()) == 0) {
+                return GattServiceHandler.getInstance();
+            } else {
+                GattServiceHandler.getInstance().disconnect();
+                return GattServiceHandler.getInstance(this, device);
             }
+
         }
         return null;
     }

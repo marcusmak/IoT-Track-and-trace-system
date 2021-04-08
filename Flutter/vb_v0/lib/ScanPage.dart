@@ -56,16 +56,28 @@ class _ScanPageState extends State<ScanPage> {
       print("ScanPage:initState");
       if(MyApp.bluetoothDevice != null && MyApp.bluetoothDevice.isConnected){
         print("ble already connected");
-      }else{
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String mAddress = prefs.getString("mAddress");
-        String mName = prefs.getString("mName");
-        MyApp.bluetoothDevice = BluetoothDevice(mName, mAddress);
-          if(!await MyApp.bluetoothDevice.connect()){
-            showDialog(context: context, builder:(context)=>
-              new BleDevicesDialog(context)
-          );
-          print("show dialog");
+      }else {
+        // print("here");
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        // String mAddress = prefs.getString("mAddress");
+        // String mName = prefs.getString("mName");
+        // print("BLE_DEVICE_PREF: " + mName.toString() + " " + mAddress.toString());
+        // if(mName != null && mAddress != null) {
+        //     MyApp.bluetoothDevice = BluetoothDevice(mName, mAddress);
+        //     await MyApp.bluetoothDevice.connect();
+        // }
+        if (await BluetoothDevice.connectLastSession() == null) {
+          print("here1");
+          if (await BluetoothDevice.bleGetConnected() == null) {
+
+            showDialog(
+                context: context,
+                builder: (context) => new BleDevicesDialog(context));
+            print("show dialog");
+          }
+        }else{
+
+          print("here2");
         }
       }
     });
@@ -136,11 +148,14 @@ class _ScanPageState extends State<ScanPage> {
 
       ];
       if (temp.image!=null) {
-            _itemDetails.add(Container(
-                child: Image.file(
-              File(temp.image),
-              fit: BoxFit.scaleDown,
-            )));
+            _itemDetails.add(SizedBox(
+              height:MediaQuery.of(context).size.height * 0.15 ,
+              width:MediaQuery.of(context).size.width * 0.5,
+              child: Image.file(
+                File(temp.image),
+                fit: BoxFit.fill,
+              )
+            ));
             // _itemDetails.add(Container(
             //     child: Image.asset(
             //   temp.image,

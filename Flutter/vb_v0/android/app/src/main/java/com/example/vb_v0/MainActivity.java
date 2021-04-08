@@ -83,6 +83,13 @@ public class MainActivity extends FlutterActivity {
                             case "bleConnect":
                                 result.success(bleConnect(call.argument("mAddress")));
                                 break;
+                            case "bleGetConnected":
+                                String res = bleGetConnected();
+//                                if(res != null)
+                                    result.success(res);
+//                                else
+//                                    result.success("not connected",null,null);
+                                break;
                             case "bleDisconnect":
                                 result.success(bleDisconnect(call.argument("mAddress")));
                                 break;
@@ -181,9 +188,9 @@ public class MainActivity extends FlutterActivity {
         }else {
             Log.d("MainActivity", "onStart: " + String.valueOf(bindService(new Intent(this, BleScanner.class), connection, Context.BIND_AUTO_CREATE)));
             //!!!!!!!!!!!!!!!!!!!!!!!!
-            //TODO comment for debug only
-            if(!debugMode)
-                bindService(new Intent(this, BleScanner.class),connection,Context.BIND_AUTO_CREATE);
+//            //TODO comment for debug only
+//            if(!debugMode)
+            bindService(new Intent(this, BleScanner.class),connection,Context.BIND_AUTO_CREATE);
         }
 
 
@@ -219,6 +226,14 @@ public class MainActivity extends FlutterActivity {
         Log.d("BLE_Connection", "connecting to " + address);
         return mBleConnector.connectToDevice(address) != null;
 
+    }
+
+    private String bleGetConnected(){
+        Log.d("BLE_Connection", "connecting to background");
+        if(GattServiceHandler.getInstance() != null && GattServiceHandler.isConnecting){
+            return GattServiceHandler.getInstance().getConnectedDeviceName() +"|" + GattServiceHandler.getInstance().getConnectedDeviceAddress();
+        };
+        return null;
     }
 
     private boolean bleDisconnect(String address){

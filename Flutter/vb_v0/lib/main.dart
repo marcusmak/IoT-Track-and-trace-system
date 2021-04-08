@@ -38,7 +38,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // AndroidAlarmManager.initialize();
   await LocalDataManager.DeleteDatabase();
-  LocalDataManager.InitialiseDatabase();
+  await LocalDataManager.InitialiseDatabase();
   
   runApp(MyApp());
   // AndroidAlarmManager.periodic(const Duration(seconds: 1), /*helloAlarmID*/ 4, printHello, exact: true, rescheduleOnReboot: false);
@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: LoginPage(),
       routes: <String, WidgetBuilder>{
         '/login':(BuildContext context) => LoginPage(),
         '/register' : (BuildContext context) => RegisterPage(),

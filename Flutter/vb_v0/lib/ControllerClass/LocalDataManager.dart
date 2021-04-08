@@ -8,6 +8,7 @@ import 'package:vb_v0/ModelClass/ItemContext.dart';
 import 'package:vb_v0/ModelClass/Item.dart';
 import 'package:flutter/widgets.dart'; //required.
 import 'package:path_provider/path_provider.dart';
+import 'package:vb_v0/ModelClass/Pin.dart';
 
 class LocalDataManager{
   static Database database;
@@ -81,7 +82,7 @@ class LocalDataManager{
     database = await openDatabase(dbPath);
     // }
     try {
-      String sql = "SELECT EPC, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN custom_class ON Item.classID = custom_class.classID";
+      String sql = "SELECT EPC, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN classInfo ON Item.classID = classInfo.classID";
       List<Map<String,dynamic>> res = await database.rawQuery(sql);
       database.close();
       return res.map((element)=>new Item.fromMap(element)).toList();
@@ -89,10 +90,31 @@ class LocalDataManager{
       print("error in line 86 localdatamanager.dart");
       print(e);
     }
-    
+
     database.close();
     return null;
-    
+
+  }
+
+  static Future<List<Item>> fetchAllInBagItems() async{
+    var dbPath = join(await getDatabasesPath(),'localDB.db');
+    print("fetching all items");
+    // if(!database.isOpen || database == null){
+    database = await openDatabase(dbPath);
+    // }
+    try {
+      String sql = "SELECT EPC, Item.classID, name, image, rItems, in_bag, className, classType FROM Item LEFT JOIN classInfo ON Item.classID = classInfo.classID where in_bag = 1";
+      List<Map<String,dynamic>> res = await database.rawQuery(sql);
+      database.close();
+      return res.map((element)=>new Item.fromMap(element)).toList();
+    }catch(e){
+      print("error in line 106 localdatamanager.dart");
+      print(e);
+    }
+
+    database.close();
+    return null;
+
   }
 
   static Future<bool> putAllItems(List<Item> items) async{
@@ -104,6 +126,9 @@ class LocalDataManager{
         print(item.toString());
         print(item.toMap().toString());
         await database.insert("Item", item.toMap());
+        // if(item.classID[0] == "s"){
+        await database.insert("classInfo",item.classInfo() );
+        // }
       }catch(e){
         print("Error on putting in database");
         print(e);
@@ -133,5 +158,30 @@ class LocalDataManager{
     }catch(e){
       print(e);
     }
+  }
+
+  static Future<List<Pin>> fetchPinHistory() async{
+    var dbPath = join(await getDatabasesPath(),'localDB.db');
+    print("fetching pins history");
+    // if(!database.isOpen || database == null){
+    database = await openDatabase(dbPath);
+    // }
+    try {
+      String sql = "SELECT ROUND((CAST ((timestamp -((SELECT MAX(timestamp) FROM outbag_record) - 2592000000))AS REAL)/2592000000),2) as color_intensity, "
+          + "timestamp, loc, Item.name FROM outbag_record "
+          + "INNER JOIN Item ON outbag_record.EPC = Item.EPC "
+          + "WHERE timestamp >= ((SELECT MAX(timestamp) FROM outbag_record) - 2592000000)";
+      List<Map<String,dynamic>> res = await database.rawQuery(sql);
+      database.close();
+      return res.map((element)=>new Pin.fromMap(element)).toList();
+
+    }catch(e){
+      print("error in line 152 localdatamanager.dart");
+      print(e);
+    }
+
+    database.close();
+    return null;
+
   }
 }

@@ -9,9 +9,39 @@ class BluetoothDevice{
   String mAddress;
   bool isConnected = false;
 
+  static Future<BluetoothDevice> connectLastSession() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String mAddress = prefs.getString("mAddress");
+    String mName = prefs.getString("mName");
+    print("mName: " + mName.toString());
+    print("mAddress: " + mAddress.toString());
+
+    if(mName == null || mAddress == null)
+      return null;
+    print("here1.1");
+    MyApp.bluetoothDevice = new BluetoothDevice(mName, mAddress);
+    if(await MyApp.bluetoothDevice.connect()){
+      return MyApp.bluetoothDevice;
+    }else{
+      return null;
+    };
+  }
+  
+  static Future<BluetoothDevice> bleGetConnected() async{
+    print("bleGetConnected flutter");
+    String temp = await blePlatform.invokeMethod("bleGetConnected");
+    if(temp != null){
+      MyApp.bluetoothDevice = new BluetoothDevice(temp.split("|")[0], temp.split("|")[1]);
+      MyApp.bluetoothDevice.isConnected = true;
+      return MyApp.bluetoothDevice;
+    };
+    return null;
+  }
+
   BluetoothDevice(this.mName,this.mAddress);
   
   Future<bool> connect() async {
+    print("connect to " + this.mName);
     try {
       if(await blePlatform.invokeMethod("bleConnect",{"mName":this.mName,"mAddress":this.mAddress})){
           isConnected = true;
@@ -19,6 +49,8 @@ class BluetoothDevice{
           await prefs.setString("lastBLE", mAddress);    
           await prefs.setString("lastBLEName", mName);
           return true;
+      }else{
+        print("fail to connect to " + this.mName);
       };
     } on PlatformException catch (e) {
       isConnected = false;
@@ -32,6 +64,9 @@ class BluetoothDevice{
     try {
       if(await blePlatform.invokeMethod('bleDisconnect',{"mAddress":this.mAddress})){
         isConnected = false;
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.remove("lastBLE");
+        prefs.remove("lastBLEName");
         return true;
       }
     } on PlatformException catch (e) {
@@ -81,7 +116,6 @@ class _BleDevicesDialogState extends State<BleDevicesDialog> {
 
   List<Widget> listOfItems(List<Map> devices){
     List<Widget> results = new List();
-    // if
     devices.forEach((element) {
       results.add(
         SimpleDialogItem( 

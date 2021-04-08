@@ -24,7 +24,18 @@ class ItemFetcher {
       LocalDataManager.BrosweData("Item");
       items = await LocalDataManager.fetchAllItems();
       print("items fetched:" );
-      items.forEach((element) {print(element.toString());});
+      List<String> sysItemEPC = [];
+      items.forEach((element) {
+      if(element.classType == null) {
+        print("system clsas: " + element.toString());
+      } else
+          print(element.toString());
+      });
+
+
+      //
+
+
       callback();
       // items = <Item> [
       //   Item(

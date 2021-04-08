@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   static const Color barBgColor = Color.fromARGB(255, 79, 79, 79);
   static const Color inactiveBtnColor = Color.fromRGBO(130, 121, 121,0.5);
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
+  // FloatingActionButton live_update_button;
   Widget BPContent;
   void setBPContent(Widget content){
     print("set Content");
@@ -39,12 +39,13 @@ class _HomePageState extends State<HomePage> {
       //   style: optionStyle,
       // ),
       ListTab(this.setBPContent,this.setBottomPrompt),
-      // MapTab(),
-      Text(
-        'Index 1: Map',
-        style: optionStyle,
-      ),
       PackingTab(),
+      MapTab(),
+      // Text(
+      //   'Index 1: Map',
+      //   style: optionStyle,
+      // ),
+
       // Text(
       //   'Index 2: Packing',
       //   style: optionStyle,
@@ -55,8 +56,9 @@ class _HomePageState extends State<HomePage> {
       ),
     ];
   }
-
+  // Color floatbuttonColor = float
   void _onItemTapped(int index) {
+
     setState(() {
       _selectedIndex = index;
     });
@@ -94,11 +96,7 @@ class _HomePageState extends State<HomePage> {
               children:[
                   Scaffold(
                     // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-                    //  floatingActionButton: FloatingActionButton(
-                    //     onPressed: (){MyApp.bluetoothDevice?.fetchCharValue();},
-                    //     backgroundColor: Colors.white60,
-                    //     child: Icon(Icons.add),
-                    // ),
+                    // floatingActionButton: live_update_button,
                     body: Scaffold(
                       backgroundColor: Color.fromARGB(255, 100, 100, 100),
                       body: Padding(
@@ -154,17 +152,18 @@ class _HomePageState extends State<HomePage> {
                           title: Text('List'),
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.map),
-                          title: Text('Map'),
-                        ),
-                        BottomNavigationBarItem(
                           icon: Icon(Icons.card_travel_rounded),
                           title: Text('Packing'),
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.pie_chart),
-                          title: Text('School'),
+                          icon: Icon(Icons.map),
+                          title: Text('Map'),
                         ),
+
+                        // BottomNavigationBarItem(
+                        //   icon: Icon(Icons.pie_chart),
+                        //   title: Text('School'),
+                        // ),
                       ],
                       currentIndex: _selectedIndex,
                       selectedItemColor: Color.fromRGBO(207, 190, 190, 1),

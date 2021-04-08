@@ -32,7 +32,7 @@ public class GattServiceHandler{
     private static final String SERVICE_UUID              = "3a0f9e45-81dc-4117-8f6a-8ebebd11fee8";
     private static final String CHARACTERISTIC_LIVE_UUID  = "a8eeccdd-2335-4b7e-9ca0-f22d404144f1";
     private static final String CHARACTERISTIC_BATCH_UUID = "e4a90c6d-e898-4a3a-a20f-86d9b09026b0";
-    public static GattServiceHandler instance;
+    public static GattServiceHandler instance = null;
 
     public static GattServiceHandler getInstance(Context context,BluetoothDevice device){
         if(instance == null){
@@ -70,6 +70,12 @@ public class GattServiceHandler{
         if(mBluetoothDevice == null)
             return null;
         return mBluetoothDevice.getAddress();
+    }
+
+    public String getConnectedDeviceName(){
+        if(mBluetoothDevice == null)
+            return null;
+        return mBluetoothDevice.getName();
     }
 
     public void close(){

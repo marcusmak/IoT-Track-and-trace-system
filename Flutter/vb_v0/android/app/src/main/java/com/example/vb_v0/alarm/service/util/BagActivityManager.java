@@ -75,7 +75,7 @@ public class BagActivityManager extends BroadcastReceiver {
         for(String epc : items){
             if(!inbag_items.contains(epc)) {
                 ContentValues contentVal = new ContentValues();
-                contentVal.put("timestamp", (new Date()).getTime());
+                contentVal.put("timestamp", System.currentTimeMillis());
                 if(loc != null)
                     contentVal.put("loc",loc);
                 contentVal.put("EPC", epc);
@@ -94,7 +94,7 @@ public class BagActivityManager extends BroadcastReceiver {
             return;
         for(String epc : outbag_records){
             ContentValues contentVal = new ContentValues();
-            contentVal.put("timestamp", System.currentTimeMillis()/1000);
+            contentVal.put("timestamp", System.currentTimeMillis());
             if(loc != null)
                 contentVal.put("loc", loc);
             contentVal.put("EPC", epc);

@@ -1,67 +1,105 @@
+// import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:platform_maps_flutter/platform_maps_flutter.dart';
-// import 'dart:io' show Platform;
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
+import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:vb_v0/ControllerClass/LocalDataManager.dart';
+import 'package:vb_v0/HelperComponents/Custom_popup_tile.dart';
+import 'package:vb_v0/ModelClass/Pin.dart';
 
 class MapTab extends StatefulWidget {
-  MapTab({Key key}) : super(key: key);
+  static Map<Marker,Pin> marker2pins = new Map();
 
   @override
-  _MapTabState createState() => _MapTabState();
+  State<MapTab> createState() => MapTabState();
 }
 
-class _MapTabState extends State<MapTab> {
+class MapTabState extends State<MapTab> {
+  // List<Marker> _markers = new List();
+
+  // List<Pin> _points = [
+  //   new Pin(LatLng(50.732342,-3.52343),"A",0,0.25),
+  //   new Pin(LatLng(50.72342,-3.5123423),"A",0,0.5),
+  //   new Pin(LatLng(50.7323492,-3.51923),"A",0,1),
+  // ];
+
+
+
+  static const _markerSize = 40.0;
+  List<Marker> _markers = [];
+
+  /// Used to trigger showing/hiding of popups.
+  final PopupController _popupLayerController = PopupController();
+
+  @override
+  void initState() {
+    super.initState();
+    LocalDataManager.fetchPinHistory().then((list)=>updatePins(list));
+
+  }
+
+  void updatePins(List<Pin> pins){
+    if(pins == null) {
+      print("no pin his ");
+      return;
+    }
+    print("update pins");
+    print(pins.toString());
+    setState((){
+      _markers = pins
+          .map(
+            (Pin pin) {
+
+              Marker res = new Marker(
+                point: pin.point,
+                width: _markerSize,
+                height: _markerSize,
+                builder: (_) =>
+                    Icon(Icons.location_on, size: _markerSize,
+                      color: Color.fromRGBO(255, 0, 0, pin.intensity),),
+                anchorPos: AnchorPos.align(AnchorAlign.top),
+              );
+
+              MapTab.marker2pins[res] = pin;
+              return res;
+            }
+      )
+      .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal:MediaQuery.of(context).size.width  * 0.01,
-          vertical:  MediaQuery.of(context).size.height * 0.01
+    return Expanded(
+        child:
+        FlutterMap(
+        options: MapOptions(
+          center: LatLng(50.731292,-3.519817),
+          plugins: [PopupMarkerPlugin()],
+          zoom: 10.0,
         ),
-        child:PlatformMap(
-          initialCameraPosition: CameraPosition(
-            target: const LatLng(47.6, 8.8796),
-            zoom: 16.0,
+        layers: [
+          TileLayerOptions(
+              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              subdomains: ['a', 'b', 'c']
           ),
-          // markers: Set<Marker>.of(
-          //   [
-          //     Marker(
-          //       markerId: MarkerId('marker_1'),
-          //       position: LatLng(47.6, 8.8796),
-          //       consumeTapEvents: true,
-          //       infoWindow: InfoWindow(
-          //         title: 'PlatformMarker',
-          //         snippet: "Hi I'm a Platform Marker",
-          //       ),
-          //       onTap: () {
-          //         print("Marker tapped");
-          //       },
-          //     ),
-          //   ],
+          PopupMarkerLayerOptions(
+            markers: _markers,
+            // popupSnap: widget.popupSnap,
+            popupController: _popupLayerController,
+            popupBuilder: (BuildContext _, Marker marker) => ExamplePopup(marker),
+          ),
+          // MarkerLayerOptions(
+          //   markers: ,
           // ),
-          // myLocationEnabled: false,
-          // myLocationButtonEnabled: false,
-          // // onTap: (location) => print('onTap: $location'),
-          // onCameraMove: (cameraUpdate) => print('onCameraMove: $cameraUpdate'),
-          // compassEnabled: true,
-          // onMapCreated: (controller) {
-          //   Future.delayed(Duration(seconds: 2)).then(
-          //     (_) {
-          //       controller.animateCamera(
-          //         CameraUpdate.newCameraPosition(
-          //           const CameraPosition(
-          //             bearing: 270.0,
-          //             target: LatLng(51.5160895, -0.1294527),
-          //             tilt: 30.0,
-          //             zoom: 18,
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   );
-          // },
-        ),
+        ],
       )
     );
   }
+
+
 }
+
+
+
+

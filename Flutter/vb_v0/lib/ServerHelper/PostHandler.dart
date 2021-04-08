@@ -36,3 +36,23 @@ Future<String> PostHandler(String actionURL,Object bodyArgument) async {
   }
 
 }
+
+Future<List<Map<String,dynamic>>> epc2class(List<dynamic> epc) async{
+  // print("EPC to string" + epc.toString());
+  String res = await PostHandler("/epc2class",<String,List<dynamic>>{"EPC":epc});
+  // print("EPC2item request to server: "+ res);
+  print("response : " + res.toString());
+  if(res != null){
+  List temp = jsonDecode(res);
+  List<Map<String,dynamic>> maps = temp.map((e) => e as Map<String,dynamic>).toList();
+
+  print("converted to " + maps.first['className']);
+  return maps;
+  }else{
+  List<Map<String,dynamic>> maps;
+  epc.forEach((element) {
+  maps.add({'EPC':element as String,'classType':"Other"});
+  });
+  return maps;
+  }
+}

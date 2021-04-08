@@ -13,47 +13,60 @@ const TextStyle titleStyle =
                 fontSize: 25,
                 fontWeight: FontWeight.w800
       );
+class PackingTab extends StatefulWidget {
+  PackingListHandler packingListHandler = new PackingListHandler();
 
-class PackingTab extends StatelessWidget{
-    
-    // const PackingTab({Key key, this.style}) : super(key: key);
+  PackingTab({Key key}) : super(key: key);
 
-    @override
-    Widget build(BuildContext context) {
+  @override
+  _PackingTabState createState() => _PackingTabState();
+}
+
+class _PackingTabState extends State<PackingTab> {
+  String trip_type = "short";
+  bool live_updating = false;
+  @override
+  Widget build(BuildContext context) {
       // print(style);
       // List<Widget> _child = ;
+      return 
+      Expanded(child: 
+        Stack(
+          children:[
+            SingleChildScrollView(
+              physics:  BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              child:
+                Column(
+                  children: <Widget>[
+                    headerExpandable(context),
+                    PackingListWidget(trip_type,widget.packingListHandler),
+                  ],
+                )
+            ),
 
-      return Expanded(
-        child: SingleChildScrollView(
-        physics:  BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        child:
-          Column(
-            children: <Widget>[
-              headerExpandable(context),
-              PackingListWidget()
-            ],
-              
-              // ExpandableCapsulteWidget(
-              //   title: Text("Clothes",style: titleStyle,),
-              //   child: Text("123"),
-              // ),
-              // ExpandableCapsulteWidget(
-              //   title: Text("2",style: titleStyle,),
-              //   child: Text("2",style: titleStyle,),
-              // ),
-              // ExpandableCapsulteWidget(
-              //   title: Text("3",style: titleStyle,),
-              //   child: Text("3",style: titleStyle,),
-              // ),
-              // ExpandableCapsulteWidget(
-              //   title: Text("4",style: titleStyle,),
-              //   child: Text("4",style: titleStyle,),
-              // ),
-              
-            // ]
-          )
-        )
+            Positioned(
+              bottom: 15,
+              right: 15,
+              child: 
+                FloatingActionButton(
+                  onPressed: (){
+                    setState(() {
+                      live_updating = !live_updating;
+                      if(live_updating){
+                        widget.packingListHandler.startUpdate(setState);
+                      }else{
+                        widget.packingListHandler.stopUpdate();
+                      }
+                    });
+                    print("live_updating");
+                  },
+                  backgroundColor: live_updating?Colors.blueGrey.shade400:Colors.white60,
+                  child: 
+                  Icon(Icons.refresh),
+              ),
+            ),
+        ])
       );
     }
 
@@ -112,7 +125,31 @@ class PackingTab extends StatelessWidget{
                     print(_isExpanded);
                   },
                   children: <Widget>[
-                      Text("trip detail")
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20
+                        ),
+                        child: 
+                          // StatefulBuilder(
+                          //   builder: (BuildContext context, setState) {
+                             
+                          //     return
+                              
+                            Row(
+                                mainAxisAlignment:  MainAxisAlignment.center,
+                                children: [
+                                  Text("Short"),
+                                  Switch(value: trip_type == "long", onChanged: (value){
+                                    // if(value)
+                                      setState(() => changeTripType(value?"long":"short"));
+                                    
+                                  }),               
+                                  Text("Long "),    
+                                ],
+                              )
+                          //   },
+                          // ),
+                      )// Text("trip detail")
                     ],
                 ),
               ),
@@ -124,19 +161,26 @@ class PackingTab extends StatelessWidget{
         // Text(this.title),
       );
     }
+
+    void changeTripType(String tripType){
+      this.trip_type = tripType;
+      widget.packingListHandler.changeTripType(tripType);
+    }
 }
 
 
 
 class PackingListWidget extends StatefulWidget {
-  PackingListWidget({Key key}) : super(key: key);
+  String trip_type;
+  PackingListHandler packingListHandler;
+  PackingListWidget(this.trip_type,this.packingListHandler,{Key key}) : super(key: key);
 
   @override
   _PackingListWidgetState createState() => _PackingListWidgetState();
 }
 
 class _PackingListWidgetState extends State<PackingListWidget> {
-  PackingListHandler packingListHandler = new PackingListHandler();
+  
   HashMap<ItemCategory,List<PackingItem>> packingLists = HashMap();
   HashMap<PackingItem,bool> toggleStatus = HashMap<PackingItem,bool>();
   int test = 0;
@@ -159,15 +203,15 @@ class _PackingListWidgetState extends State<PackingListWidget> {
   void categoriseItems(){
     packingLists.clear();
     toggleStatus.clear();
-    packingListHandler.packingItemList.forEach((element) {
-      if(packingLists.containsKey(element.itemCategory)){
-        packingLists[element.itemCategory].add(element);
+    widget.packingListHandler.packingItemMap.entries.forEach((element) {
+      if(packingLists.containsKey(element.value.itemCategory)){
+        packingLists[element.value.itemCategory].add(element.value);
       }else{
         List temp = new List<PackingItem>();
-        temp.add(element);
-        packingLists[element.itemCategory] = temp;
+        temp.add(element.value);
+        packingLists[element.value.itemCategory] = temp;
       }
-      toggleStatus[element] = false;
+      toggleStatus[element.value] = false;
     });
   }
 
@@ -246,6 +290,7 @@ class _PackingListWidgetState extends State<PackingListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("Building packinglist for " + widget.trip_type + " trip.");
     categoriseItems();
     List<Widget> _result = generateCapsules(context);
     return 
