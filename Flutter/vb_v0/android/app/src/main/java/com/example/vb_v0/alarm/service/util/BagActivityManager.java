@@ -70,20 +70,22 @@ public class BagActivityManager extends BroadcastReceiver {
         Log.d(TAG_BOOT_EXECUTE_SERVICE, "old in bag: " + inbag_items.toString());
         Log.d(TAG_BOOT_EXECUTE_SERVICE, "new in bag: " + items.toString());
 //        request
-        if(inbag_items.containsAll(items))
-            return;
+//        if(inbag_items.containsAll(items))
+//            return;
+        ContentValues contentVal = new ContentValues();
         for(String epc : items){
             if(!inbag_items.contains(epc)) {
-                ContentValues contentVal = new ContentValues();
+                contentVal.clear();
                 contentVal.put("timestamp", System.currentTimeMillis());
                 if(loc != null)
                     contentVal.put("loc",loc);
                 contentVal.put("EPC", epc);
                 db.insert("inbag_record", null, contentVal);
-                contentVal.clear();
-                contentVal.put("in_bag",1);
-                db.update("Item", contentVal,"EPC = ?", new String[] {epc});
+
             }
+            contentVal.clear();
+            contentVal.put("in_bag",1);
+            db.update("Item", contentVal,"EPC = ?", new String[] {epc});
         }
     }
 

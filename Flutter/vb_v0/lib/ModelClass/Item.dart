@@ -43,7 +43,7 @@ class Item {
     this.image = itemMap.containsKey('image')?itemMap['image']:null;
     // this.rItems = itemMap.containsKey('rItems')?itemMap['rItems']:null;
     this.name = itemMap.containsKey('name')?itemMap['name']:null;
-    this.in_bag = itemMap.containsKey('in_bag')?itemMap['in_bag'] != "0":false;
+    this.in_bag = itemMap.containsKey('in_bag')?itemMap['in_bag'] != 0:false;
     this.classType = itemMap.containsKey('classType')?itemMap['classType']:null;
 
   }

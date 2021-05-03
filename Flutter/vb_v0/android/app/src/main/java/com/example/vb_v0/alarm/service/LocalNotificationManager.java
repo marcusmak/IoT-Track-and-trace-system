@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 
 import android.content.Context;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -63,6 +64,9 @@ public class LocalNotificationManager {
                     .setStyle(new NotificationCompat.BigTextStyle()
                             .bigText("Much longer text that cannot fit one line..."))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setDefaults(-1)
+//                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+//                    .setVibrate()
                     .setCategory(NotificationCompat.CATEGORY_REMINDER);
         }else{
             builder = new NotificationCompat.Builder(context, CHANNEL_ID)

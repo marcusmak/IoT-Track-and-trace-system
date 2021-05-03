@@ -20,7 +20,9 @@ import com.example.vb_v0.alarm.service.util.RuleChecker;
 import com.example.vb_v0.ble.service.GattServiceHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.flutter.Log;
 
@@ -37,6 +39,9 @@ public class RunAfterBootService extends Service {
 
     private static final String TAG_BOOT_EXECUTE_SERVICE = "BOOT_BROADCAST_SERVICE";
 //    private SQLiteHelper dbHelper;// = new SQLiteHelper();
+
+    private HashMap<String,Long> itemNotiTimestamp = new HashMap<>();
+
 
     private PackingContextManager contextManager;
     private RuleChecker ruleChecker;
@@ -93,9 +98,22 @@ public class RunAfterBootService extends Service {
 
             //check system rule && check custom rule // && check internet recommendations
             List<String> reminderString = new ArrayList<>(ruleChecker.checkRule(currentPC));
+            long current = System.currentTimeMillis();
+            int i = 0;
+            for(String item : reminderString){
+                if(itemNotiTimestamp.containsKey(item)) {
+                    if (current - itemNotiTimestamp.get(item).longValue() < 60 * 2 * 1000) {
+                       reminderString.remove(i);
+                       ++i;
+                       continue;
+                    }
+                }
+                itemNotiTimestamp.put(item,current);
+                ++i;
+            };
+
             if (!reminderString.isEmpty()) {
                 localNotificationManager.showNotification(reminderString, true);
-
             }
             ;
 

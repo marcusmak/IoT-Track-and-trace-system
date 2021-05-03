@@ -53,32 +53,50 @@ class _ListTabState extends State{
       
       // print(style);
       return Expanded(
-        child: SingleChildScrollView(
-        physics:  BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        child:
-          Column(
-            children: <Widget>[
-              ExpandableCapsuleWidget(
-                title: Text("Digital",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt,"Digital"),
-              ),
-              ExpandableCapsuleWidget(
-                title: Text("Sport",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt,"Sport"),
-              ),
-              ExpandableCapsuleWidget(
-                title: Text("Work",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt,"Work"),
-              ),
-              ExpandableCapsuleWidget(
-                title: Text("Clothes",style: titleStyle,),
-                child: ItemListContainer(setBPContent,setBottomPrompt,"Clothes"),
-              ),
-              
-            ]
-          )
-        )
+        child:Stack(children:[
+             SingleChildScrollView(
+              physics:  BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              child:
+                Column(
+                  children: <Widget>[
+                    ExpandableCapsuleWidget(
+                      title: Text("Digital",style: titleStyle,),
+                      child: ItemListContainer(setBPContent,setBottomPrompt,"Digital"),
+                    ),
+                    ExpandableCapsuleWidget(
+                      title: Text("Sport",style: titleStyle,),
+                      child: ItemListContainer(setBPContent,setBottomPrompt,"Sport"),
+                    ),
+                    ExpandableCapsuleWidget(
+                      title: Text("Work",style: titleStyle,),
+                      child: ItemListContainer(setBPContent,setBottomPrompt,"Work"),
+                    ),
+                    ExpandableCapsuleWidget(
+                      title: Text("Clothes",style: titleStyle,),
+                      child: ItemListContainer(setBPContent,setBottomPrompt,"Clothes"),
+                    ),
+
+                  ]
+                )
+            ),
+             Positioned(
+            bottom: 15,
+            right: 15,
+            child:
+            FloatingActionButton(
+              splashColor: Colors.blueGrey.shade400,
+              onPressed: (){
+                ItemFetcher.initItems(()=>setState(()=>ready = true));
+                print("refresh");
+              },
+              backgroundColor: Colors.white60,
+              child:
+                Icon(Icons.refresh),
+            ),
+          ),
+        ])
+
       );
     }
 }
@@ -163,6 +181,7 @@ class ItemContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    // print(item.in_bag);
     Widget displayImage;
     if(item.image!='null' && item.image != null){
       if(item.image.contains("item-pics")){
@@ -187,7 +206,8 @@ class ItemContainer extends StatelessWidget {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       // border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
-                      color: Colors.white70
+                      color: item.in_bag?Colors.white70:Colors.white38
+
 
                     ),
                   child:Column(
@@ -198,13 +218,17 @@ class ItemContainer extends StatelessWidget {
                                 height:MediaQuery.of(context).size.height * 0.15 ,
                                 width:MediaQuery.of(context).size.width * 0.5,
                                 
-                                child:displayImage,
+                                child: Opacity(
+                                  opacity: item.in_bag?1:0.5,
+                                  child: displayImage,
+                                )
+
                                 // child: item.image!='null' && item.image != null?Image.asset(item.image , fit: BoxFit.fill):Center(child:Text("No image")),
                               ),
-                              Text(item.name!=null?item.name:item.className,
-                                    
+                              Text(
+                                  item.name!=null?item.name:item.className,
                                   style: TextStyle(
-                                            color:Color.fromRGBO( 75, 75, 75, 1), 
+                                            color:Color.fromRGBO( 75, 75, 75, 1),
                                             fontSize: 20,
                                             fontWeight: FontWeight.w800
                                   )

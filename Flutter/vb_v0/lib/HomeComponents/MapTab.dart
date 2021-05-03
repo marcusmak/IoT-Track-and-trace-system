@@ -76,7 +76,7 @@ class MapTabState extends State<MapTab> {
         options: MapOptions(
           center: LatLng(50.731292,-3.519817),
           plugins: [PopupMarkerPlugin()],
-          zoom: 10.0,
+          zoom: 15.0,
         ),
         layers: [
           TileLayerOptions(

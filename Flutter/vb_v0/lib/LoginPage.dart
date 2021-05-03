@@ -85,6 +85,7 @@ class _LoginPageState extends State<LoginPage>{
                                 passwordInputWidget(_currentState != LoginPageState.FORGOT, "Password"),
                                 // passwordInputWidget(_currentState == LoginPageState.SIGNUP, "Confirm Password"),
                                 loginButton(context),
+                                guestButton(context),
                                 additionHyperlinks(),
                                 // forgetPassword(),
                                 // signUp(context),
@@ -299,6 +300,35 @@ class _LoginPageState extends State<LoginPage>{
         //   ],
         // )
       )
+    );
+  }
+
+  Widget guestButton(BuildContext _context){
+    return Container(
+        height: MediaQuery.of(_context).size.height * 0.07,
+        child: MaterialButton(
+          onPressed: (){
+            Navigator.of(context).pushReplacementNamed("/home");
+          },
+          child: Center(
+              child:
+              Text(
+                  "LOGIN AS GUEST",
+                  style:TextStyle(fontSize:25, color:Color.fromRGBO(225, 222, 210, 1), fontWeight: FontWeight.w600)
+              )
+          ),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(color:Color.fromRGBO(225, 222, 210, 1)),
+          color: Color.fromRGBO(89,89,89,1),
+          // gradient: LinearGradient(
+          //   colors: [
+          //     Color.fromRGBO(89,56,33,1),
+          //     Color.fromRGBO(89,56,33,1),
+          //   ],
+          // )
+        )
     );
   }
 

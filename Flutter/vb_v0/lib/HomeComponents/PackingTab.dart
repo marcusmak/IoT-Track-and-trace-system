@@ -255,17 +255,17 @@ class _PackingListWidgetState extends State<PackingListWidget> {
                         children: [
                           Row(
                             children:[
-                              GestureDetector(
-                                onTap: (){
-                                  setState(() {
-                                    //todo: unknown bugs 
-                                    print(toggleStatus.containsKey(e));
-                                    toggleStatus.update(e, (value){return !value;} , ifAbsent: (){ print('abs'); return false;});
-                                  });
-                                  // print(toggleStatus[e]);
-                                }, 
-                                child: toggleStatus[e]?Icon(Icons.check_circle,size: 30.0,):Icon(Icons.check_circle_outline,size: 30.0,)
-                              ),
+                              // GestureDetector(
+                              //   onTap: (){
+                              //     setState(() {
+                              //       print(toggleStatus.containsKey(e));
+                              //       toggleStatus.update(e, (value){return !value;} , ifAbsent: (){ print('abs'); return false;});
+                              //     });
+                              //     // print(toggleStatus[e]);
+                              //   },
+                              //   child: toggleStatus[e]?Icon(Icons.check_circle,size: 30.0,):Icon(Icons.check_circle_outline,size: 30.0,)
+                              // ),
+                              e.currentNum==e.requiredNum?Icon(Icons.check_circle,size: 30.0,):Icon(Icons.check_circle_outline,size:30.0,),
                               Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: MediaQuery.of(context).size.width * 0.05
@@ -273,7 +273,7 @@ class _PackingListWidgetState extends State<PackingListWidget> {
                                 child: Text(e.name, style: contextTs,)
                               )
                             ]
-                          ) , Text("${e.currentNum}//${e.requiredNum}", style:contextTs)
+                          ) , Text("${e.currentNum}/${e.requiredNum}", style:contextTs)
                             
                         ],
                       ),
