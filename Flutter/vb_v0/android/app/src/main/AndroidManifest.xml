@@ -9,7 +9,7 @@
     <application
         android:requestLegacyExternalStorage="true"
         android:name="io.flutter.app.FlutterApplication"
-        android:label="vb_v0"
+        android:label="Virtual Butler"
         android:icon="@mipmap/ic_launcher">
             <meta-data android:name="com.google.android.geo.API_KEY"
                        android:value="AIzaSyAErVHs6hSqqTy8WJVb0EpetjRRxXscvhg"/>
