@@ -56,7 +56,7 @@ class _ExamplePopupState extends State<ExamplePopup> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              '${MapTab.marker2pins[_marker].ItemName}',
+              '${MapTab.marker2pins[_marker].ItemName != null ?MapTab.marker2pins[_marker].ItemName:MapTab.marker2pins[_marker].ClassName  }',
               overflow: TextOverflow.fade,
               softWrap: false,
               style: const TextStyle(

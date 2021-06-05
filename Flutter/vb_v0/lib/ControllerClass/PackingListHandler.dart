@@ -17,11 +17,14 @@ class PackingListHandler{
       "Shoes" :PackingItem(name:"Shoes",requiredNum: 1, itemCategory: ItemCategory.Clothes ),
       "Electric Shaver": PackingItem(name:"Electric Shaver",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
       "Hair brush": PackingItem(name:"Hair brush",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
-      "Toothbrush": PackingItem(name:"Toothbrush",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
-      "Shampoo": PackingItem(name:"Shampoo",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
-      "Hair Conditioner": PackingItem(name:"Hair Conditioner",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
+      // "Toothbrush": PackingItem(name:"Toothbrush",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
+      // "Shampoo": PackingItem(name:"Shampoo",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
+      // "Hair Conditioner": PackingItem(name:"Hair Conditioner",requiredNum: 1, itemCategory: ItemCategory.Toiletries ),
       "Trousers": PackingItem(name:"Trousers",requiredNum: 2, itemCategory: ItemCategory.Clothes ),
-      "Tablet": PackingItem(name:"Tablet",requiredNum: 1, itemCategory: ItemCategory.Digital ),
+      "Tablet": PackingItem(name:"Tablet",requiredNum: 1, itemCategory: ItemCategory.Essential ),
+      "Passport": PackingItem(name:"Passport",requiredNum: 1, itemCategory: ItemCategory.Essential ),
+      "Sunglasses":PackingItem(name:"Sunglasses",requiredNum: 1, itemCategory: ItemCategory.Clothes ),
+      "Headphones":PackingItem(name:"Headphones",requiredNum: 1, itemCategory: ItemCategory.Clothes ),
     };
   }
   void resetPIM(){
@@ -193,7 +196,7 @@ class PackingListHandler{
 enum ItemCategory {
   Clothes,
   Toiletries,
-  Digital,
+  Essential,
   //todo: add more cat
 }
 class PackingItem {

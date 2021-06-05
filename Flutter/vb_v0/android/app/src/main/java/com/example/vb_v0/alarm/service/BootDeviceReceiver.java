@@ -35,7 +35,7 @@ public class BootDeviceReceiver extends BroadcastReceiver {
 
         String message = "BootDeviceReceiver onReceive, action is " + action;
 
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
         Log.d(TAG_BOOT_BROADCAST_RECEIVER, message);
         Log.d(TAG_BOOT_BROADCAST_RECEIVER,"Running on UI thread: " + (Looper.myLooper() == Looper.getMainLooper()));

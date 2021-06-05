@@ -167,10 +167,11 @@ class LocalDataManager{
     database = await openDatabase(dbPath);
     // }
     try {
-      String sql = "SELECT ROUND((CAST ((timestamp -((SELECT MAX(timestamp) FROM outbag_record) - 2592000000))AS REAL)/2592000000),2) as color_intensity, "
-          + "timestamp, loc, Item.name FROM outbag_record "
-          + "INNER JOIN Item ON outbag_record.EPC = Item.EPC "
-          + "WHERE timestamp >= ((SELECT MAX(timestamp) FROM outbag_record) - 2592000000)";
+      String sql = "SELECT ROUND((CAST ((timestamp -((SELECT MAX(timestamp) FROM outbag_record) - 2592000000))AS REAL)/2592000000),2) as color_intensity,"+
+     " timestamp, loc, Item.name, className FROM outbag_record " +
+     " INNER JOIN Item ON outbag_record.EPC = Item.EPC " +
+     " LEFT JOIN classInfo ON Item.classID = classInfo.classID " +
+     " WHERE timestamp >= ((SELECT MAX(timestamp) FROM outbag_record) - 2592000000) " ;
       List<Map<String,dynamic>> res = await database.rawQuery(sql);
       database.close();
       return res.map((element)=>new Pin.fromMap(element)).toList();

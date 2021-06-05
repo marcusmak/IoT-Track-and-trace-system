@@ -88,6 +88,9 @@ flutter:
     - assets/images/leather_shoes.png
     - assets/images/airpod.jpg
     - assets/localDB.db
+    - assets/images/wallet.png
+    - assets/images/umbrella.png
+    - assets/images/passport.png
     # # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

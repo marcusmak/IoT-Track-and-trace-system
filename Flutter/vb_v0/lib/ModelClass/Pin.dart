@@ -6,10 +6,11 @@ class Pin{
   LatLng point;
   int timestamp;
   String ItemName;
+  String ClassName;
 
 
 
-  Pin(this.point,this.ItemName,this.timestamp,this.intensity);
+  Pin(this.point,this.ItemName,this.ClassName,this.timestamp,this.intensity);
 
   Pin.fromMap(Map<String,dynamic> map){
 
@@ -40,6 +41,8 @@ class Pin{
       this.ItemName = null;
     }
     this.ItemName = temp;
+
+    this.ClassName = map.containsKey("className")?map["className"]:null;
 
 
   }
