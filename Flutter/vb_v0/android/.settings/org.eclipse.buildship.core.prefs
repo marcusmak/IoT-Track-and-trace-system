@@ -1,11 +1,11 @@
-arguments=
+arguments=--init-script /var/folders/np/31qb1yg13r527myqhb2d2twm0000gn/T/init9211691674540564389.gradle --init-script /var/folders/np/31qb1yg13r527myqhb2d2twm0000gn/T/init12473947491914885474.gradle
 auto.sync=false
 build.scans.enabled=false
 connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
 connection.project.dir=
 eclipse.preferences.version=1
 gradle.user.home=
-java.home=C\:/Program Files/Java/jdk1.8.0_181
+java.home=/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home
 jvm.arguments=
 offline.mode=false
 override.workspace.settings=true
